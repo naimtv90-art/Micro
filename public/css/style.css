@@ -1344,7 +1344,76 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   Responsive Breakpoints
+   Responsive Grid & Layout Utilities
+   ========================================================================== */
+.grid-2-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.grid-3-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.grid-4-col {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.responsive-card-box {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+}
+
+.clinic-info-box {
+  background: #f8faf9;
+  border: 1px solid #e2ece6;
+  border-radius: var(--radius-xl);
+  padding: 30px;
+}
+
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 50px;
+}
+
+.filter-bar-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints & Mobile Overhaul
    ========================================================================== */
 @media (max-width: 1220px) {
   .nav-link {
@@ -1363,17 +1432,10 @@ button, input, select, textarea {
 
 @media (max-width: 1040px) {
   .main-nav {
-    display: none;
+    display: none !important;
   }
   .mobile-menu-btn {
-    display: block;
-  }
-}
-
-@media (max-width: 1024px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 36px;
+    display: flex !important;
   }
   .products-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -1381,8 +1443,23 @@ button, input, select, textarea {
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .stats-grid {
+  .grid-3-col {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-4-col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .product-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 24px 20px;
   }
   .footer-top {
     grid-template-columns: 1fr 1fr;
@@ -1390,26 +1467,59 @@ button, input, select, textarea {
 }
 
 @media (max-width: 768px) {
-  .top-bar {
-    display: none;
+  .section {
+    padding: 48px 0;
   }
-  .main-nav {
-    display: none; /* Controlled by mobile menu */
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .top-bar {
+    display: none !important;
   }
   .btn-header-call {
-    display: none;
-  }
-  .mobile-menu-btn {
-    display: block;
+    display: none !important;
   }
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
-  .services-grid {
-    grid-template-columns: 1fr;
+  .services-grid,
+  .clinics-grid,
+  .grid-2-col,
+  .grid-3-col,
+  .grid-4-col {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
   }
-  .clinics-grid {
-    grid-template-columns: 1fr;
+  .form-row-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  .filter-bar-header {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+  .responsive-card-box {
+    padding: 24px 18px !important;
+  }
+  .clinic-info-box {
+    padding: 20px 16px !important;
+  }
+  .foundation-block {
+    padding: 24px 18px !important;
+    margin-bottom: 30px;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    margin-top: 24px;
+  }
+  .stat-card {
+    padding: 16px !important;
+  }
+  .stat-num {
+    font-size: 2rem !important;
   }
   .feature-row {
     grid-template-columns: 1fr;
@@ -1426,20 +1536,101 @@ button, input, select, textarea {
   }
   .footer-top {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 }
 
-@media (max-width: 480px) {
-  .products-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 540px) {
+  .header-inner {
+    padding: 8px 0;
+  }
+  .brand-logo img {
+    height: 34px !important;
+    width: auto !important;
+  }
+  .header-actions .btn-sm[data-open-appointment] {
+    padding: 6px 12px !important;
+    font-size: 0.78rem !important;
+  }
+  .hero-section {
+    padding: 30px 0 40px;
+  }
+  .hero-title {
+    font-size: 1.85rem !important;
+    line-height: 1.22 !important;
+  }
+  .hero-desc {
+    font-size: 0.95rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 20px;
   }
   .hero-buttons {
-    flex-direction: column;
+    flex-direction: column !important;
+    gap: 12px !important;
   }
   .hero-buttons .btn {
-    width: 100%;
+    width: 100% !important;
+    justify-content: center;
+    padding: 13px 20px !important;
+    font-size: 0.95rem !important;
   }
-  .hero-showcase {
-    grid-template-columns: 1fr;
+  .products-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .product-thumb {
+    height: 200px !important;
+    padding: 16px !important;
+  }
+  .product-body {
+    padding: 18px 16px !important;
+  }
+  .floating-actions {
+    bottom: 16px !important;
+    right: 14px !important;
+    gap: 8px !important;
+    z-index: 1100;
+  }
+  .fab-btn {
+    width: 44px !important;
+    height: 44px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+  }
+  .fab-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .modal-box {
+    padding: 24px 16px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .clinic-card {
+    padding: 20px 16px !important;
+  }
+  .clinic-phones {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .clinic-phone-btn {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+  }
+  .clinic-map-wrap iframe {
+    height: 220px !important;
   }
 }
+
+@media (max-width: 380px) {
+  .header-actions .btn-sm[data-open-appointment] {
+    display: none !important;
+  }
+  .brand-logo img {
+    height: 30px !important;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+

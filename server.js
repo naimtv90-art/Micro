@@ -211,6 +211,7 @@ app.get('/blog', (req, res) => {
 });
 
 // Contact Us
+app.get('/contact', (req, res) => res.redirect(301, '/contact-us'));
 app.get('/contact-us', (req, res) => {
   res.render('contact', {
     pageTitle: 'Contact Us & Clinic Locations (Uttara & Gazipur) – Micro Hearing Aid Centre',
