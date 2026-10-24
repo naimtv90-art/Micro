@@ -60,22 +60,22 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   const featuredProducts = products.filter(p => p.featured).slice(0, 8);
   const heroSliderProducts = [
-    { title: "Naida V90 UP", slug: "naida-v90-up", img: "/images/Naida_V_UP-1-300x300.png" },
-    { title: "Phonak CIC", slug: "hearing-aid-phonak-cic-2", img: "/images/images-34.jpeg" },
-    { title: "Rexton Hearing Aid", slug: "rexton-hearing-aid", img: "/images/Rexton_Arena_HP_3_-300x300.webp" },
-    { title: "Unitron Hearing Aid", slug: "hearing-aid-unitron", img: "/images/max-300x300.webp" },
-    { title: "Phonak Naida L 30 UP", slug: "phonak-naida-l-30-up-2", img: "/images/phonak-.webp" },
-    { title: "Phonak Sky", slug: "phonak-sky", img: "/images/phonak-naida-90_sky_v_p_-300x300.webp" },
-    { title: "Phonak Naida Q 70 UP", slug: "phonak-naida-q-50-up", img: "/images/11-scaled-300x300.jpg" },
-    { title: "Phonak Naida V50 UP", slug: "phonak-naida-b50-up", img: "/images/Naida_V_UP-1-300x300.png" },
-    { title: "Naida B 50 UP", slug: "naida-b-50-up", img: "/images/Naida_V_UP-1-300x300.png" },
-    { title: "Phonak Naida V 70 SP", slug: "phonak-naida-v-70-sp", img: "/images/1-300x300.jpg" },
-    { title: "Naida V 70 UP", slug: "naida-v-70-up", img: "/images/1-300x300.jpg" },
-    { title: "Cleaning and Care", slug: "cleaning-and-care", img: "/images/Hearing-Repair-Service-1-300x300.jpg" },
-    { title: "Terra SP", slug: "terra-sp", img: "/images/digital-phonak-naida-l30-pr-bte-recharable-behind-the-ear-hearing-aid-500x500-2-300x300.webp" },
-    { title: "Phonak Infinio", slug: "phonak-infinio", img: "/images/images-14.jpeg" },
-    { title: "Terra UP", slug: "phonak-terra-up", img: "/images/PhonakNaidaLUPSandBeigePair-300x300.webp" },
-    { title: "Rexton CIC", slug: "hearing-aid-rexton-cic", img: "/images/cic-300x300.jpg" }
+    { title: "Naida V90 UP", slug: "naida-v90-up", img: "/images/phonak-naida-bte-digital-hearing-aid-uttara-bangladesh.png" },
+    { title: "Phonak CIC", slug: "hearing-aid-phonak-cic-2", img: "/images/phonak-cic-invisible-in-canal-hearing-aid-dhaka-bangladesh.jpeg" },
+    { title: "Rexton Hearing Aid", slug: "rexton-hearing-aid", img: "/images/rexton-arena-hearing-aid-uttara-bangladesh.webp" },
+    { title: "Unitron Hearing Aid", slug: "hearing-aid-unitron", img: "/images/unitron-digital-bte-hearing-aid-uttara-dhaka.webp" },
+    { title: "Phonak Naida L 30 UP", slug: "phonak-naida-l-30-up-2", img: "/images/phonak-naida-l30-up-lumity-hearing-aid-dhaka.webp" },
+    { title: "Phonak Sky", slug: "phonak-sky", img: "/images/phonak-sky-children-hearing-aid-dhaka-bangladesh.webp" },
+    { title: "Phonak Naida Q 70 UP", slug: "phonak-naida-q-50-up", img: "/images/phonak-naida-q70-hearing-aid-uttara-bangladesh.jpg" },
+    { title: "Phonak Naida V50 UP", slug: "phonak-naida-b50-up", img: "/images/phonak-naida-bte-digital-hearing-aid-uttara-bangladesh.png" },
+    { title: "Naida B 50 UP", slug: "naida-b-50-up", img: "/images/phonak-naida-bte-digital-hearing-aid-uttara-bangladesh.png" },
+    { title: "Phonak Naida V 70 SP", slug: "phonak-naida-v-70-sp", img: "/images/phonak-naida-v70-bte-hearing-aid-gazipur-bangladesh.jpg" },
+    { title: "Naida V 70 UP", slug: "naida-v-70-up", img: "/images/phonak-naida-v70-bte-hearing-aid-gazipur-bangladesh.jpg" },
+    { title: "Cleaning and Care", slug: "cleaning-and-care", img: "/images/hearing-aid-repair-service-uttara-gazipur-bangladesh.jpg" },
+    { title: "Terra SP", slug: "terra-sp", img: "/images/phonak-terra-sp-hearing-aid-uttara-dhaka.webp" },
+    { title: "Phonak Infinio", slug: "phonak-infinio", img: "/images/phonak-infinio-ai-digital-hearing-aid-bangladesh.jpeg" },
+    { title: "Terra UP", slug: "phonak-terra-up", img: "/images/phonak-terra-up-hearing-aid-gazipur-bangladesh.webp" },
+    { title: "Rexton CIC", slug: "hearing-aid-rexton-cic", img: "/images/rexton-cic-hearing-aid-gazipur-uttara-bangladesh.jpg" }
   ];
 
   res.render('index', {
