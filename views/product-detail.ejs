@@ -1,0 +1,98 @@
+<%- include('partials/header') %>
+
+<section class="section" style="padding-top: 30px;">
+  <div class="container">
+    <!-- Breadcrumbs -->
+    <div style="font-size: 0.9rem; color: #64748b; margin-bottom: 24px;">
+      <a href="/" style="color: var(--color-primary);">Home</a> &nbsp;/&nbsp; 
+      <a href="/products" style="color: var(--color-primary);">Products</a> &nbsp;/&nbsp; 
+      <span style="color: #0f172a; font-weight: 600;"><%= product.title %></span>
+    </div>
+
+    <!-- Product Main Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: 40px; box-shadow: var(--shadow-sm); margin-bottom: 50px;">
+      <!-- Product Image -->
+      <div style="background: #f8faf9; border-radius: var(--radius-lg); padding: 30px; display: flex; align-items: center; justify-content: center; position: relative;">
+        <span class="product-brand-tag" style="top: 20px; left: 20px; font-size: 0.85rem; padding: 4px 14px;">
+          <%= product.brand %> Genuine
+        </span>
+        <img src="<%= product.image %>" alt="<%= product.title %>" style="max-height: 380px; width: auto; object-fit: contain;">
+      </div>
+
+      <!-- Product Details & Actions -->
+      <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary); background: var(--color-primary-soft); padding: 4px 12px; border-radius: var(--radius-pill);">
+            <%= product.type %>
+          </span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: #16a34a;">
+            ● In Stock &bull; Authorized Fitting Center
+          </span>
+        </div>
+
+        <h1 style="font-size: clamp(1.8rem, 2.5vw, 2.4rem); font-weight: 800; color: #0f172a; line-height: 1.25; margin-bottom: 16px;">
+          <%= product.title %>
+        </h1>
+
+        <p style="font-size: 1.05rem; color: #475569; line-height: 1.7; margin-bottom: 24px;">
+          <%= product.description %> Engineered with cutting-edge audiological acoustics to optimize speech understanding in all environments, from intimate family conversations to noisy outdoor gatherings.
+        </p>
+
+        <!-- Value Add Badges -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 18px 20px; margin-bottom: 28px;">
+          <h4 style="font-size: 0.95rem; font-weight: 800; color: #166534; margin-bottom: 8px;">MHCC Patient Care Inclusions:</h4>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; color: #14532d;">
+            <li>✓ Free Soundproof Booth Hearing Evaluation &amp; Device Trial</li>
+            <li>✓ Precision Real-Ear Measurement (REM) &amp; Digital Programming</li>
+            <li>✓ 5 Years Free Routine 6-Monthly Servicing &amp; Maintenance</li>
+            <li>✓ 2 Years Free Audiometric Retesting &amp; Fine-Tuning</li>
+          </ul>
+        </div>
+
+        <!-- Call to Action Buttons -->
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-top: auto;">
+          <a href="https://wa.me/8801787519995?text=Hello%20Micro%20Hearing%20Care%20Centre,%20I%20want%20to%20inquire%20about%20<%= encodeURIComponent(product.title) %>" target="_blank" class="btn btn-whatsapp btn-lg" style="flex: 1;">
+            Order / Inquire on WhatsApp
+          </a>
+          <button class="btn btn-primary btn-lg" data-open-appointment="uttara" style="flex: 1;">
+            Book Trial &amp; Fitting
+          </button>
+          <a href="tel:01787519995" class="btn btn-red btn-lg">
+            📞 Call Specialist
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <% if (related && related.length > 0) { %>
+      <div style="margin-top: 50px;">
+        <div class="section-header" style="text-align: left; margin-bottom: 24px;">
+          <h3 style="font-size: 1.5rem; font-weight: 800; color: #0f172a;">More from <%= product.brand %></h3>
+        </div>
+        <div class="products-grid">
+          <% related.forEach(rel => { %>
+            <div class="product-card">
+              <div class="product-thumb">
+                <span class="product-brand-tag"><%= rel.brand %></span>
+                <img src="<%= rel.image %>" alt="<%= rel.title %>" loading="lazy">
+              </div>
+              <div class="product-body">
+                <div class="product-type"><%= rel.type %></div>
+                <h4 class="product-title">
+                  <a href="/product/<%= rel.slug %>"><%= rel.title %></a>
+                </h4>
+                <div class="product-meta">
+                  <a href="/product/<%= rel.slug %>" class="btn btn-outline btn-sm" style="flex: 1;">View</a>
+                  <a href="https://wa.me/8801787519995?text=Inquiry%20about%20<%= encodeURIComponent(rel.title) %>" target="_blank" class="btn btn-whatsapp btn-sm">WhatsApp</a>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

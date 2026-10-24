@@ -1,0 +1,68 @@
+{
+  "siteName": "Micro Hearing Aid Centre",
+  "siteTagline": "Hearing means quality of life – Make better living",
+  "domain": "https://microhearingaidbd.com",
+  "logo": "/images/microhearing-logo.png",
+  "emergencyHelpline": "01787 51 999 5",
+  "emergencyHelplineRaw": "01787519995",
+  "whatsappNumber": "+8801787519995",
+  "whatsappLink": "https://wa.me/8801787519995?text=Hello%20Micro%20Hearing%20Care%20Centre,%20I%20would%20like%20to%20inquire%20about%20hearing%20aids",
+  "emails": [
+    "microhearingaidbd@gmail.com",
+    "info@microhearingaidbd.com"
+  ],
+  "branches": [
+    {
+      "id": "uttara",
+      "type": "Head Office",
+      "name": "Uttara Head Office",
+      "address": "House-26 (3rd floor, lift 3), Sonargaon Janapath Road, Sector-11, Uttara, Dhaka-1230",
+      "phones": ["01787 51 999 5", "01785 550 154"],
+      "phonesRaw": ["01787519995", "01785550154"],
+      "hours": "Saturday – Thursday: 10:00 AM – 8:00 PM (Friday Closed / By Appointment)",
+      "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.5134763071853!2d90.3846175!3d23.8713401!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c414f68662bd%3A0xe54d6faebad4a180!2sSonargaon%20Janapath%2C%20Dhaka!5e0!3m2!1sen!2sbd!4v1700000000000"
+    },
+    {
+      "id": "gazipur",
+      "type": "Branch Office",
+      "name": "Gazipur Branch",
+      "address": "Hazi Sunam Uddin Waqf Estate Market (1st Floor), Dhaka-Mymensingh Road, Chandana Chowrasta, Gazipur-1702",
+      "phones": ["01788 552 559", "01977 237 740"],
+      "phonesRaw": ["01788552559", "01977237740"],
+      "hours": "Saturday – Thursday: 10:00 AM – 8:00 PM (Friday Closed / By Appointment)",
+      "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3644.898863640243!2d90.3789505!3d23.9984186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755da54593f619b%3A0xa68bc04dbe8a97bf!2sChandana%20Chowrasta%2C%20Gazipur!5e0!3m2!1sen!2sbd!4v1700000000000"
+    }
+  ],
+  "stats": [
+    { "value": "2014", "label": "Year We Opened", "sub": "Serving Bangladesh for over a decade" },
+    { "value": "6", "label": "Hearing Care Services", "sub": "Complete clinical audiology" },
+    { "value": "2", "label": "Offices: Uttara & Gazipur", "sub": "Convenient clinic locations" },
+    { "value": "All Ages", "label": "Children to Seniors", "sub": "Specialized pediatric & geriatric testing" }
+  ],
+  "navigation": [
+    { "label": "Home", "url": "/" },
+    {
+      "label": "Hearing Aids",
+      "url": "/hearing-aids",
+      "children": [
+        { "label": "Hearing Aids Overview", "url": "/hearing-aids" },
+        { "label": "Hearing Aids Style", "url": "/hearing-aids-style" },
+        { "label": "How do Hearing Aids Work", "url": "/how-do-hearing-aid-work" },
+        { "label": "Hearing Aid Brands in Bangladesh", "url": "/hearing-aid-brand-in-bangladesh" }
+      ]
+    },
+    { "label": "Products", "url": "/products" },
+    { "label": "Services", "url": "/services" },
+    {
+      "label": "Others",
+      "url": "/our-mission",
+      "children": [
+        { "label": "Humanitarian Works", "url": "/humanitarian-works" },
+        { "label": "Our Mission", "url": "/our-mission" },
+        { "label": "Hearing Aid Area of Activities", "url": "/hearing-aid-area-of-activities" }
+      ]
+    },
+    { "label": "Blog", "url": "/blog" },
+    { "label": "Contact Us", "url": "/contact-us" }
+  ]
+}

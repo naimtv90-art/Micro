@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : site.siteName %></title>
+  
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : site.siteTagline %>">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="<%= site.domain %><%= currentPath %>">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= typeof pageTitle !== 'undefined' ? pageTitle : site.siteName %>">
+  <meta property="og:description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : site.siteTagline %>">
+  <meta property="og:url" content="<%= site.domain %><%= currentPath %>">
+  <meta property="og:site_name" content="Micro Hearing Aid Centre">
+  <meta property="og:image" content="<%= site.domain %>/images/microhearing-logo.png">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/microhearing-logo-300x50.png">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css?v=3">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Micro Hearing Care Centre",
+    "alternateName": "MHCC Bangladesh",
+    "url": "https://microhearingaidbd.com",
+    "logo": "https://microhearingaidbd.com/images/microhearing-logo.png",
+    "description": "Leading hearing care and hearing aid fitting centre in Bangladesh serving Dhaka and Gazipur since 2014.",
+    "telephone": "+8801787519995",
+    "email": "microhearingaidbd@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "House-26 (3rd floor, lift 3), Sonargaon Janapath Road, Sector-11, Uttara",
+      "addressLocality": "Dhaka",
+      "postalCode": "1230",
+      "addressCountry": "BD"
+    },
+    "openingHours": "Sa-Th 10:00-20:00"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Top Hotline Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span class="badge-247">24/7 Helpline</span>
+        <a href="tel:<%= site.emergencyHelplineRaw %>" class="top-bar-item">
+          <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <strong><%= site.emergencyHelpline %></strong>
+        </a>
+        <a href="mailto:info@microhearingaidbd.com" class="top-bar-item" style="opacity: 0.9;">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          info@microhearingaidbd.com
+        </a>
+      </div>
+      <div class="top-bar-right">
+        <span>Clinics: Uttara &amp; Gazipur</span>
+        <a href="<%= site.whatsappLink %>" target="_blank" class="top-bar-item" style="color: #4ade80;">
+          WhatsApp Chat
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <!-- Logo -->
+      <a href="/" class="brand-logo" aria-label="Micro Hearing Aid Centre">
+        <img src="<%= site.logo %>" alt="Micro Hearing Aid Centre Logo" width="220" height="48" fetchpriority="high">
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="main-nav" aria-label="Main Navigation">
+        <ul class="nav-list">
+          <% site.navigation.forEach(item => { %>
+            <% const isActive = currentPath === item.url || (item.children && item.children.some(c => c.url === currentPath)); %>
+            <li class="nav-item <%= isActive ? 'active' : '' %>">
+              <a href="<%= item.url %>" class="nav-link" style="white-space: nowrap;">
+                <span><%= item.label %></span>
+                <% if (item.children) { %>
+                  <svg class="nav-arrow" viewBox="0 0 10 6" fill="none" style="flex-shrink: 0;"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <% } %>
+              </a>
+              <% if (item.children) { %>
+                <ul class="dropdown-menu">
+                  <% item.children.forEach(sub => { %>
+                    <li>
+                      <a href="<%= sub.url %>" class="dropdown-link <%= currentPath === sub.url ? 'active' : '' %>" style="white-space: nowrap;">
+                        <%= sub.label %>
+                      </a>
+                    </li>
+                  <% }); %>
+                </ul>
+              <% } %>
+            </li>
+          <% }); %>
+        </ul>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="header-actions">
+        <button class="btn btn-primary btn-sm" data-open-appointment="uttara" style="border-radius: var(--radius-pill); white-space: nowrap;">
+          Book Appointment
+        </button>
+        <a href="tel:<%= site.emergencyHelplineRaw %>" class="btn-header-call" style="white-space: nowrap;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink: 0;"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <span style="white-space: nowrap;"><%= site.emergencyHelpline %></span>
+        </a>
+        <!-- Mobile Toggle -->
+        <button class="mobile-menu-btn" aria-label="Open Navigation Menu">
+          <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="mobileDrawerOverlay"></div>
+  <div id="mobileDrawer">
+    <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+      <img src="<%= site.logo %>" alt="Logo" style="height: 36px;">
+      <button id="closeMobileDrawer" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #475569;">&times;</button>
+    </div>
+    <div style="padding: 20px; flex-grow: 1;">
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px;">
+        <% site.navigation.forEach(item => { %>
+          <li class="<%= item.children ? 'drawer-has-sub' : '' %>" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+            <a href="<%= item.url %>" style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #1e293b; padding: 8px 0;">
+              <%= item.label %>
+              <% if (item.children) { %>
+                <span>▾</span>
+              <% } %>
+            </a>
+            <% if (item.children) { %>
+              <ul class="drawer-sub-menu" style="list-style: none; padding-left: 14px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px;">
+                <% item.children.forEach(sub => { %>
+                  <li>
+                    <a href="<%= sub.url %>" style="font-size: 0.9rem; color: #64748b; display: block; padding: 4px 0;">
+                      <%= sub.label %>
+                    </a>
+                  </li>
+                <% }); %>
+              </ul>
+            <% } %>
+          </li>
+        <% }); %>
+      </ul>
+      <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-primary" data-open-appointment="uttara" style="width: 100%;">Book Appointment</button>
+        <a href="tel:<%= site.emergencyHelplineRaw %>" class="btn btn-red" style="width: 100%;">Call Helpline</a>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #mobileDrawerOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; opacity: 0; visibility: hidden; transition: 0.3s; }
+    #mobileDrawer { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #fff; z-index: 1600; box-shadow: -5px 0 25px rgba(0,0,0,0.2); transition: right 0.3s ease; display: flex; flex-direction: column; overflow-y: auto; }
+    #mobileDrawer.open { right: 0 !important; }
+    #mobileDrawerOverlay.active { opacity: 1 !important; visibility: visible !important; }
+  </style>
+
+  <main>

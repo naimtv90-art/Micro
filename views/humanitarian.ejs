@@ -1,0 +1,81 @@
+<%- include('partials/header') %>
+
+<section class="section" style="background: linear-gradient(135deg, #07381b 0%, #0d562b 100%); color: #fff; padding: 60px 0;">
+  <div class="container" style="text-align: center;">
+    <span class="hero-badge" style="background: rgba(255,255,255,0.15);">Social Responsibility &amp; Welfare</span>
+    <h1 style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; margin-bottom: 14px; color: #fff;">
+      Humanitarian Works
+    </h1>
+    <p style="max-width: 760px; margin: 0 auto; color: #d1fae5; font-size: 1.15rem; line-height: 1.6;">
+      Hearing aids, free of cost, for deaf people of Bangladesh. Micro Hearing Care Centre (MHCC) provides hearing aids free of charge to underprivileged and deaf individuals across the nation.
+    </p>
+  </div>
+</section>
+
+<!-- Partner Organisations -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Partnerships for Impact</span>
+      <h2 class="section-title">Our 5 Partner Organisations</h2>
+      <p class="section-subtitle">
+        We collaborate closely with registered disability welfare foundations to identify deserving patients and deliver certified audiology testing, free instruments, and lifetime support.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 50px;">
+      <div class="service-card">
+        <div class="service-icon-box">🤝</div>
+        <h3>Socio-economic Development Association for Disabled</h3>
+        <p>Working collaboratively to empower individuals with hearing impairments through targeted community screening and direct aid distribution.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🌸</div>
+        <h3>Disabled Women Development Organization</h3>
+        <p>Focused on rehabilitation, education, and free hearing aid fitting for underprivileged deaf women and young girls.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🌟</div>
+        <h3>Protibondhi Kollyan Somiti</h3>
+        <p>Community-based rehabilitation ensuring rural individuals with severe hearing loss receive clinical testing and free digital hearing devices.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🕊️</div>
+        <h3>Magura Women Disabled Organization</h3>
+        <p>Providing essential audiological diagnosis, custom earmould fabrication, and free hearing aids to deaf residents in greater Magura region.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon-box">🌱</div>
+        <h3>Uttaran Protibondhi Songstha</h3>
+        <p>Grassroots empowerment delivering audiological healthcare, follow-up maintenance, and assistive hearing technology to low-income families.</p>
+      </div>
+
+      <div class="service-card" style="background: var(--color-primary-soft); border-color: var(--color-primary);">
+        <div class="service-icon-box" style="background: var(--color-primary); color: #fff;">❤️</div>
+        <h3>Join Our Humanitarian Mission</h3>
+        <p>Do you know someone in need or represent a disability welfare organization? Contact our director directly to recommend beneficiaries.</p>
+        <a href="/contact-us" class="service-card-link">Contact Us Today &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Long-term Care Commitment -->
+    <div style="background: #ffffff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: 40px; box-shadow: var(--shadow-sm);">
+      <h3 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 14px;">
+        Our Care Goes Beyond the First Fitting
+      </h3>
+      <p style="color: #475569; font-size: 1.05rem; line-height: 1.7; margin-bottom: 20px;">
+        Providing a hearing aid is only the first step. For a child or adult who has lived in silence, adapting to the auditory world requires ongoing acoustic counseling, routine earmould resizing, replacement of batteries, and continuous maintenance. Micro Hearing Care Centre pledges full after-sales care for every single device gifted through our humanitarian program.
+      </p>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <a href="tel:01787519995" class="btn btn-red">Call Our Welfare Desk</a>
+        <a href="<%= site.whatsappLink %>" target="_blank" class="btn btn-whatsapp">WhatsApp Humanitarian Inquiry</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

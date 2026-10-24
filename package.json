@@ -1,0 +1,25 @@
+{
+  "name": "micro-hearing-aid-bd",
+  "version": "1.0.0",
+  "description": "Ultra-fast Node.js web application for Micro Hearing Aid Centre Bangladesh",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "hearing-aid",
+    "bangladesh",
+    "phonak",
+    "rexton",
+    "unitron",
+    "audiology"
+  ],
+  "author": "Micro Hearing Care Centre",
+  "license": "ISC",
+  "dependencies": {
+    "compression": "^1.8.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://microhearingaidbd.com/sitemap.xml

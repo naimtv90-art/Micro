@@ -1,0 +1,161 @@
+<%- include('partials/header') %>
+
+<section class="section" style="background: linear-gradient(135deg, #07381b 0%, #0d562b 100%); color: #fff; padding: 60px 0;">
+  <div class="container" style="text-align: center;">
+    <span class="hero-badge" style="background: rgba(255,255,255,0.15);">Get in Touch</span>
+    <h1 style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; margin-bottom: 14px; color: #fff;">
+      Contact Us &bull; Book an Appointment Today
+    </h1>
+    <p style="max-width: 720px; margin: 0 auto; color: #d1fae5; font-size: 1.15rem; line-height: 1.6;">
+      For appointments, enquiries or hearing consultations, please call or email us today. As a trusted hearing centre in Dhaka and Gazipur, we are committed to improving hearing health with care, trust and professionalism.
+    </p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 24px;">
+      <a href="tel:<%= site.emergencyHelplineRaw %>" class="btn btn-red btn-lg">
+        📞 Call <%= site.emergencyHelpline %>
+      </a>
+      <a href="<%= site.whatsappLink %>" target="_blank" class="btn btn-whatsapp btn-lg">
+        💬 WhatsApp Chat
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Form and Clinics Section -->
+<section class="section">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start;">
+      
+      <!-- Interactive Booking Form -->
+      <div style="background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: 40px; box-shadow: var(--shadow-sm);">
+        <div style="margin-bottom: 24px;">
+          <span class="section-badge">Fast Online Reservation</span>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-top: 4px;">Book a Consultation</h2>
+          <p style="color: #64748b; font-size: 0.95rem;">Fill in your details below and our clinic manager will call to confirm your appointment time.</p>
+        </div>
+
+        <form data-booking-form>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" name="name" required class="form-control" placeholder="Mohammad Rahman">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input type="tel" name="phone" required class="form-control" placeholder="017XXXXXXXX">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label">Preferred Clinic Location *</label>
+              <select name="branch" class="form-control">
+                <option value="uttara">Uttara Head Office (Sector-11)</option>
+                <option value="gazipur">Gazipur Branch (Chandana Chowrasta)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preferred Date / Time</label>
+              <input type="text" name="preferredDate" class="form-control" placeholder="e.g. Saturday 11:00 AM">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Patient Age Group</label>
+            <select name="ageGroup" class="form-control">
+              <option value="adult">Adult (18 - 59 years)</option>
+              <option value="senior">Senior (60+ years)</option>
+              <option value="child">Child / Pediatric (Under 18 years)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Your Questions or Requirements</label>
+            <textarea name="message" rows="3" class="form-control" placeholder="Please mention if you need a new hearing test, hearing aid trial, or servicing of an existing device..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+            Confirm Appointment Request
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Contact Info Cards -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="background: #f8faf9; border: 1px solid #e2ece6; border-radius: var(--radius-xl); padding: 30px;">
+          <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 14px;">Clinic Hours</h3>
+          <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 8px;">
+            <strong>Saturday – Thursday:</strong><br>10:00 AM – 8:00 PM
+          </p>
+          <p style="color: #475569; font-size: 0.95rem; line-height: 1.6; margin-bottom: 16px;">
+            <strong>Friday:</strong><br>Closed (Emergency &amp; Pre-booked appointments only)
+          </p>
+          <div style="border-top: 1px solid #cbd5e1; padding-top: 14px;">
+            <strong style="color: #0f172a;">Direct Email:</strong><br>
+            <a href="mailto:info@microhearingaidbd.com" style="color: var(--color-primary); font-weight: 600;">info@microhearingaidbd.com</a><br>
+            <a href="mailto:microhearingaidbd@gmail.com" style="color: var(--color-primary); font-weight: 600;">microhearingaidbd@gmail.com</a>
+          </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #093b1e 0%, #156c37 100%); color: #fff; border-radius: var(--radius-xl); padding: 30px;">
+          <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 10px;">24/7 Phone Support</h3>
+          <p style="color: #d1fae5; font-size: 0.95rem; margin-bottom: 18px;">
+            Have an urgent question about your hearing device or need immediate assistance? Call our direct hotline anytime.
+          </p>
+          <a href="tel:01787519995" class="btn btn-red" style="width: 100%;">
+            📞 01787 51 999 5
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Both Clinic Branches Detail and Maps -->
+<section class="section section-bg-light">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Visit In Person</span>
+      <h2 class="section-title">Our Clinic Locations</h2>
+      <p class="section-subtitle">Walk in or schedule an appointment with our senior audiologists.</p>
+    </div>
+
+    <div class="clinics-grid">
+      <!-- Uttara -->
+      <div class="clinic-card">
+        <span class="clinic-type-badge">Head Office</span>
+        <h3 class="clinic-name">Uttara, Dhaka</h3>
+        <div class="clinic-address">
+          <span>📍</span>
+          <span>House-26 (3rd floor, lift 3), Sonargaon Janapath Road, Sector-11, Uttara, Dhaka-1230</span>
+        </div>
+        <div class="clinic-phones">
+          <a href="tel:01787519995" class="clinic-phone-btn">📞 01787 51 999 5</a>
+          <a href="tel:01785550154" class="clinic-phone-btn">📞 01785 550 154</a>
+        </div>
+        <div class="clinic-map-wrap">
+          <iframe title="Uttara Clinic Map" src="<%= site.branches[0].mapEmbed %>" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <!-- Gazipur -->
+      <div class="clinic-card">
+        <span class="clinic-type-badge">Branch Office</span>
+        <h3 class="clinic-name">Gazipur</h3>
+        <div class="clinic-address">
+          <span>📍</span>
+          <span>Hazi Sunam Uddin Waqf Estate Market (1st Floor), Dhaka-Mymensingh Road, Chandana Chowrasta, Gazipur-1702</span>
+        </div>
+        <div class="clinic-phones">
+          <a href="tel:01788552559" class="clinic-phone-btn">📞 01788 552 559</a>
+          <a href="tel:01977237740" class="clinic-phone-btn">📞 01977 237 740</a>
+        </div>
+        <div class="clinic-map-wrap">
+          <iframe title="Gazipur Clinic Map" src="<%= site.branches[1].mapEmbed %>" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
