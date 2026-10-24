@@ -26,7 +26,7 @@
   {
     "id": 3,
     "slug": "cleaning-and-care",
-    "title": "Cleaning and Care",
+    "title": "Cleaning And Care",
     "brand": "Micro Hearing",
     "type": "Accessory",
     "image": "/images/Hearing-Repair-Service-1-500x500.jpg",
@@ -38,7 +38,7 @@
   {
     "id": 4,
     "slug": "cleaning-and-care-2",
-    "title": "Cleaning and Care",
+    "title": "Cleaning And Care",
     "brand": "Micro Hearing",
     "type": "Accessory",
     "image": "/images/Hearing-Repair-Service-1-500x500.jpg",
@@ -50,7 +50,7 @@
   {
     "id": 5,
     "slug": "naida-b-50-up",
-    "title": "naida B 50 up",
+    "title": "Naida B 50 UP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/Naida_V_UP-1-500x500.png",
@@ -62,7 +62,7 @@
   {
     "id": 6,
     "slug": "naida-v-70-up",
-    "title": "naida v 70 up",
+    "title": "Naida V 70 UP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/1-500x500.jpg",
@@ -74,7 +74,7 @@
   {
     "id": 7,
     "slug": "naida-v90-up",
-    "title": "naida v90 up",
+    "title": "Naida V90 UP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/Naida_V_UP-1-500x500.png",
@@ -86,7 +86,7 @@
   {
     "id": 8,
     "slug": "pediatric-care-kit-phonak",
-    "title": "Pediatric Care Kit phonak",
+    "title": "Pediatric Care Kit Phonak",
     "brand": "Phonak",
     "type": "Accessory",
     "image": "/images/Pediatric-Care-Kit-500x500.png",
@@ -98,7 +98,7 @@
   {
     "id": 9,
     "slug": "phonak-remote-control",
-    "title": "Phonak  Remote Control",
+    "title": "Phonak Remote Control",
     "brand": "Phonak",
     "type": "Accessory",
     "image": "/images/max-500x500.webp",
@@ -182,7 +182,7 @@
   {
     "id": 16,
     "slug": "phonak-naida-l-30-up-2",
-    "title": "phonak naida L 30 Up",
+    "title": "Phonak Naida L 30 UP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/phonak-.webp",
@@ -194,7 +194,7 @@
   {
     "id": 17,
     "slug": "phonak-naida-q-50-up",
-    "title": "phonak naida Q 70 UP",
+    "title": "Phonak Naida Q 70 UP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/11-scaled-500x500.jpg",
@@ -206,7 +206,7 @@
   {
     "id": 18,
     "slug": "phonak-naida-v-70-sp",
-    "title": "phonak naida v 70 sp",
+    "title": "Phonak Naida V 70 SP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/1-500x500.jpg",
@@ -218,7 +218,7 @@
   {
     "id": 19,
     "slug": "phonak-naida-b50-up",
-    "title": "phonak naida v50 up",
+    "title": "Phonak Naida V50 UP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/Naida_V_UP-1-500x500.png",
@@ -254,7 +254,7 @@
   {
     "id": 22,
     "slug": "phonak-sky",
-    "title": "Phonak sky",
+    "title": "Phonak Sky",
     "brand": "Phonak",
     "type": "Hearing Aid",
     "image": "/images/phonak-naida-90_sky_v_p_-500x500.webp",
@@ -422,7 +422,7 @@
   {
     "id": 36,
     "slug": "terra-sp",
-    "title": "Terra sp",
+    "title": "Terra SP",
     "brand": "Phonak",
     "type": "Behind-the-Ear (BTE)",
     "image": "/images/digital-phonak-naida-l30-pr-bte-recharable-behind-the-ear-hearing-aid-500x500-2.webp",
@@ -446,7 +446,7 @@
   {
     "id": 38,
     "slug": "hearing-aid-unitron",
-    "title": "Unitron hearing aid",
+    "title": "Unitron Hearing Aid",
     "brand": "Unitron",
     "type": "Hearing Aid",
     "image": "/images/max-500x500.webp",
