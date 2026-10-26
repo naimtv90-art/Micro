@@ -33,35 +33,40 @@
   align-items: stretch;
 }
 .ahcc-ps a.ahcc-ps-card {
-  flex: 0 0 190px !important;
-  width: 190px !important;
-  min-width: 190px !important;
-  max-width: 190px !important;
+  flex: 0 0 170px !important;
+  width: 170px !important;
+  min-width: 170px !important;
+  max-width: 170px !important;
   scroll-snap-align: start;
   display: flex !important;
   flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
   background: #ffffff !important;
   border: 1px solid #dcebd6 !important;
   border-radius: 18px !important;
-  padding: 12px !important;
+  padding: 10px !important;
   color: #0a1f0c !important;
   text-decoration: none !important;
   box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.35) !important;
-  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
   user-select: none;
+  cursor: pointer !important;
 }
 .ahcc-ps a.ahcc-ps-card:hover {
   transform: translateY(-5px) !important;
   box-shadow: 0 16px 30px -6px rgba(0, 0, 0, 0.45) !important;
+  border-color: #006837 !important;
 }
 .ahcc-ps-img {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 150px !important;
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
   background: #f2f9ef !important;
   border-radius: 14px !important;
-  padding: 12px !important;
+  padding: 10px !important;
   overflow: hidden !important;
 }
 .ahcc-ps-img img {
@@ -120,14 +125,10 @@
 
 @media (max-width: 768px) {
   .ahcc-ps a.ahcc-ps-card {
-    flex: 0 0 150px !important;
-    width: 150px !important;
-    min-width: 150px !important;
-    max-width: 150px !important;
-    padding: 10px !important;
-  }
-  .ahcc-ps-img {
-    height: 120px !important;
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
     padding: 8px !important;
   }
   .ahcc-ps-prev { left: -8px !important; }
@@ -139,21 +140,16 @@
     margin-top: 18px !important;
   }
   .ahcc-ps a.ahcc-ps-card {
-    flex: 0 0 135px !important;
-    width: 135px !important;
-    min-width: 135px !important;
-    max-width: 135px !important;
-    padding: 8px !important;
+    flex: 0 0 120px !important;
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+    padding: 6px !important;
     border-radius: 14px !important;
   }
   .ahcc-ps-img {
-    height: 105px !important;
-    padding: 6px !important;
     border-radius: 10px !important;
-  }
-  .ahcc-ps-title {
-    font-size: 0.8rem !important;
-    margin-top: 6px !important;
+    padding: 6px !important;
   }
   .ahcc-ps button.ahcc-ps-btn {
     width: 32px !important;
@@ -200,11 +196,10 @@
       <div class="ahcc-ps-viewport" tabindex="0">
         <div class="ahcc-ps-track">
           <% heroSliderProducts.forEach(item => { %>
-            <a class="ahcc-ps-card" href="/product/<%= item.slug %>" draggable="false">
+            <a class="ahcc-ps-card" href="/product/<%= item.slug %>" title="<%= item.title %>" draggable="false">
               <span class="ahcc-ps-img">
                 <img src="<%= item.img %>" alt="<%= item.title %> – Digital Hearing Aid Micro Hearing Care Centre Bangladesh" loading="eager" draggable="false">
               </span>
-              <span class="ahcc-ps-title"><%= item.title %></span>
             </a>
           <% }); %>
         </div>
