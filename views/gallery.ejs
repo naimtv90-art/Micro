@@ -1,0 +1,340 @@
+<%- include('partials/header') %>
+
+<!-- Page Hero -->
+<section class="section" style="background: linear-gradient(135deg, #07381b 0%, #0d562b 100%); color: #fff; padding: 60px 0;">
+  <div class="container" style="text-align: center;">
+    <span class="hero-badge" style="background: rgba(255,255,255,0.15);">Visual Journey</span>
+    <h1 style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; margin-bottom: 14px; color: #fff;">
+      Photo Gallery
+    </h1>
+    <p style="max-width: 720px; margin: 0 auto; color: #d1fae5; font-size: 1.1rem; line-height: 1.6;">
+      Explore our modern audiology clinics in Uttara and Gazipur, advanced diagnostic testing facilities, digital hearing aid fittings, and community outreach.
+    </p>
+  </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="section section-bg-light">
+  <div class="container">
+
+    <!-- Category Filter Bar -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px;">
+      <% categories.forEach(cat => { %>
+        <a href="/photo-gallery<%= cat === 'All' ? '' : '?category=' + encodeURIComponent(cat) %>" 
+           class="btn btn-sm <%= selectedCategory.toLowerCase() === cat.toLowerCase() ? 'btn-primary' : 'btn-outline' %>"
+           style="border-radius: var(--radius-pill); padding: 8px 18px; font-weight: 600; text-decoration: none;">
+          <%= cat %>
+        </a>
+      <% }); %>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+      <% galleryItems.forEach(item => { %>
+        <div class="gallery-card" data-gallery-item data-full-img="<%= item.image %>" data-title="<%= item.title %>" data-caption="<%= item.caption %>">
+          <div class="gallery-img-wrap">
+            <img src="<%= item.image %>" alt="<%= item.title %> – Micro Hearing Aid Centre Photo Gallery" loading="lazy">
+            <div class="gallery-overlay">
+              <span class="gallery-zoom-icon">🔍 View Full Image</span>
+            </div>
+            <span class="gallery-cat-badge"><%= item.category %></span>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title"><%= item.title %></h3>
+            <p class="gallery-desc"><%= item.caption %></p>
+          </div>
+        </div>
+      <% }); %>
+
+      <!-- Placeholder card for upcoming photos -->
+      <div class="gallery-card gallery-placeholder-card">
+        <div class="gallery-placeholder-inner">
+          <div style="font-size: 2.8rem; margin-bottom: 12px;">📷</div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-bottom: 8px;">More Photos Coming Soon</h3>
+          <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5; margin: 0 auto; max-width: 260px;">
+            We regularly update this gallery with new clinical activities, patient sessions, and workshop moments.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div id="galleryLightbox" class="lightbox-modal" role="dialog" aria-hidden="true">
+  <div class="lightbox-overlay" data-close-lightbox></div>
+  <div class="lightbox-content">
+    <button class="lightbox-close" data-close-lightbox aria-label="Close image">&times;</button>
+    <div class="lightbox-img-box">
+      <img id="lightboxImg" src="" alt="Full view">
+    </div>
+    <div class="lightbox-caption-box">
+      <h3 id="lightboxTitle"></h3>
+      <p id="lightboxDesc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Banner -->
+<section class="section" style="background: linear-gradient(135deg, #093b1e 0%, #156c37 100%); color: #fff; padding: 50px 0;">
+  <div class="container" style="text-align: center;">
+    <h2 style="font-size: clamp(1.6rem, 2.8vw, 2.2rem); font-weight: 800; color: #fff; margin-bottom: 12px;">
+      Experience Our Clinics in Person
+    </h2>
+    <p style="color: #d1fae5; max-width: 620px; margin: 0 auto 24px; font-size: 1rem; line-height: 1.6;">
+      Visit our Uttara Head Office or Gazipur Branch for a comprehensive audiometric hearing evaluation and free hearing device consultation.
+    </p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+      <button class="btn btn-primary btn-lg" data-open-appointment="uttara" style="border-radius: var(--radius-pill); background: #fff; color: #07381b; border: none; font-weight: 700;">
+        📅 Book Appointment
+      </button>
+      <a href="<%= site.whatsappLink %>" target="_blank" class="btn btn-whatsapp btn-lg" style="border-radius: var(--radius-pill);">
+        Chat on WhatsApp
+      </a>
+      <a href="tel:<%= site.emergencyHelplineRaw %>" class="btn btn-red btn-lg" style="border-radius: var(--radius-pill);">
+        📞 Call <%= site.emergencyHelpline %>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Specific Styles & Interactive Script -->
+<style>
+.gallery-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+.gallery-card:not(.gallery-placeholder-card):hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.1);
+  border-color: #86efac;
+}
+.gallery-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  background: #f8fafc;
+  overflow: hidden;
+}
+.gallery-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 14px;
+  background: #f8fafc;
+  transition: transform 0.3s ease;
+}
+.gallery-card:hover .gallery-img-wrap img {
+  transform: scale(1.05);
+}
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 56, 27, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.gallery-card:hover .gallery-overlay {
+  opacity: 1;
+}
+.gallery-zoom-icon {
+  background: #ffffff;
+  color: #07381b;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.gallery-cat-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  z-index: 2;
+}
+.gallery-content {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.gallery-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.gallery-desc {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Placeholder card */
+.gallery-placeholder-card {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  cursor: default;
+}
+.gallery-placeholder-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  height: 100%;
+}
+
+/* Lightbox Modal */
+.lightbox-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  padding: 20px;
+}
+.lightbox-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+.lightbox-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(6px);
+}
+.lightbox-content {
+  position: relative;
+  z-index: 2001;
+  max-width: 860px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  animation: modalScaleUp 0.25s ease-out;
+}
+@keyframes modalScaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.6);
+  color: #fff;
+  border: none;
+  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+.lightbox-close:hover {
+  background: #dc2626;
+}
+.lightbox-img-box {
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 60vh;
+  overflow: hidden;
+  padding: 20px;
+}
+.lightbox-img-box img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.lightbox-caption-box {
+  padding: 18px 24px;
+  background: #fff;
+  border-top: 1px solid #f1f5f9;
+}
+.lightbox-caption-box h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+.lightbox-caption-box p {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const lightbox = document.getElementById('galleryLightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxTitle = document.getElementById('lightboxTitle');
+  const lightboxDesc = document.getElementById('lightboxDesc');
+  const closeBtns = document.querySelectorAll('[data-close-lightbox]');
+
+  document.querySelectorAll('[data-gallery-item]').forEach(card => {
+    card.addEventListener('click', () => {
+      const img = card.getAttribute('data-full-img');
+      const title = card.getAttribute('data-title');
+      const caption = card.getAttribute('data-caption');
+
+      if (!img) return;
+      lightboxImg.src = img;
+      lightboxTitle.textContent = title || '';
+      lightboxDesc.textContent = caption || '';
+
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeBtns.forEach(btn => btn.addEventListener('click', closeLightbox));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+      closeLightbox();
+    }
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

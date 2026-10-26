@@ -14,6 +14,7 @@ const basePath = fs.existsSync(path.join(process.cwd(), 'data', 'siteData.json')
 // Load Data
 const siteData = JSON.parse(fs.readFileSync(path.join(basePath, 'data', 'siteData.json'), 'utf-8'));
 const products = JSON.parse(fs.readFileSync(path.join(basePath, 'data', 'products.json'), 'utf-8'));
+const galleryData = JSON.parse(fs.readFileSync(path.join(basePath, 'data', 'gallery.json'), 'utf-8'));
 
 // High-speed compression
 app.use(compression({
@@ -210,6 +211,24 @@ app.get('/blog', (req, res) => {
   });
 });
 
+// Photo Gallery
+app.get('/gallery', (req, res) => res.redirect(301, '/photo-gallery'));
+app.get('/photo-gallery', (req, res) => {
+  const { category } = req.query;
+  const categories = ['All', ...new Set(galleryData.map(g => g.category))];
+  const items = (category && category !== 'All')
+    ? galleryData.filter(g => g.category.toLowerCase() === category.toLowerCase())
+    : galleryData;
+
+  res.render('gallery', {
+    pageTitle: 'Photo Gallery – Micro Hearing Care Centre Bangladesh',
+    metaDescription: 'Browse the photo gallery of Micro Hearing Care Centre. View clinic facilities in Uttara & Gazipur, audiology diagnostics, hearing aid fitting and community events.',
+    galleryItems: items,
+    categories,
+    selectedCategory: category || 'All'
+  });
+});
+
 // Contact Us
 app.get('/contact', (req, res) => res.redirect(301, '/contact-us'));
 app.get('/contact-us', (req, res) => {
@@ -222,6 +241,10 @@ app.get('/contact-us', (req, res) => {
 // --- API Endpoints ---
 app.get('/api/products', (req, res) => {
   res.json(products);
+});
+
+app.get('/api/gallery', (req, res) => {
+  res.json(galleryData);
 });
 
 // Interactive appointment booking endpoint

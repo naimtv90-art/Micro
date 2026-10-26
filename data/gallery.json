@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "title": "Clinical Hearing Aid Servicing & Diagnostics",
+    "category": "Services",
+    "image": "/images/hearing-aid-cleaning-repair-service-dhaka-bangladesh.jpg",
+    "caption": "Precision acoustic testing, ultrasonic cleaning and diagnostic calibration by senior specialists."
+  },
+  {
+    "id": 2,
+    "title": "Uttara Clinic & Lab Service Desk",
+    "category": "Clinics",
+    "image": "/images/hearing-aid-repair-service-uttara-gazipur-bangladesh.jpg",
+    "caption": "Walk-in patient support and real-ear instrument programming at our Uttara Sector-11 head office."
+  },
+  {
+    "id": 3,
+    "title": "Pediatric Hearing Care & Testing Kit",
+    "category": "Patient Care",
+    "image": "/images/pediatric-care-kit-768x768.png",
+    "caption": "Specialized pediatric audiological diagnostic kits and colourful accessories for children."
+  },
+  {
+    "id": 4,
+    "title": "High-Power BTE Digital Fitting",
+    "category": "Hearing Aids",
+    "image": "/images/phonak-naida-v90-up-power-hearing-aid-dhaka-bangladesh.png",
+    "caption": "Phonak Naida V90 Ultra Power digital fitting for severe to profound hearing loss."
+  },
+  {
+    "id": 5,
+    "title": "Roger On Remote Wireless Microphone",
+    "category": "Hearing Aids",
+    "image": "/images/phonak-roger-on-remote-microphone-dhaka-bangladesh.png",
+    "caption": "Cutting-edge Roger wireless transmission technology for group meetings and noisy environments."
+  },
+  {
+    "id": 6,
+    "title": "Custom Invisible in Canal (CIC) Devices",
+    "category": "Hearing Aids",
+    "image": "/images/cic-768x768.jpg",
+    "caption": "Custom-moulded completely-in-canal discreet hearing solutions crafted for individual ear canals."
+  }
+]

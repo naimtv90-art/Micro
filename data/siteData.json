@@ -53,6 +53,7 @@
     },
     { "label": "Products", "url": "/products" },
     { "label": "Services", "url": "/services" },
+    { "label": "Photo Gallery", "url": "/photo-gallery" },
     {
       "label": "Others",
       "url": "/our-mission",
