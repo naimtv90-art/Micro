@@ -1,0 +1,275 @@
+<%- include('layout-header', { pageTitle: 'Blog Posts – Micro Hearing CMS', activeNav: 'blogs' }) %>
+
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .page-header h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #06381d;
+  }
+  .filters-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    border: 1px solid var(--admin-card-border);
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  }
+  .search-box {
+    flex: 1;
+    min-width: 240px;
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+  }
+  .search-box .icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  .filter-select {
+    padding: 10px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #ffffff;
+    color: #334155;
+    font-weight: 600;
+  }
+  .btn-filter {
+    padding: 10px 18px;
+    background: #006837;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-reset {
+    padding: 10px 14px;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .table-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--admin-card-border);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table th {
+    background: #f8fafc;
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--admin-card-border);
+  }
+  .data-table td {
+    padding: 14px 20px;
+    font-size: 0.92rem;
+    color: #334155;
+    border-bottom: 1px solid var(--admin-card-border);
+    vertical-align: middle;
+  }
+  .data-table tr:hover td {
+    background: #f8faf9;
+  }
+  .blog-thumb {
+    width: 60px;
+    height: 48px;
+    object-fit: cover;
+    background: #eaf5ee;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .badge-cat {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+  .btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #006837;
+    color: #ffffff;
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 104, 55, 0.25);
+  }
+  .btn-add:hover {
+    background: #0a4d29;
+  }
+  .actions-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .btn-icon {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    background: #ffffff;
+    cursor: pointer;
+  }
+  .btn-icon:hover {
+    background: #f1f5f9;
+  }
+  .btn-delete {
+    color: #dc2626;
+    border-color: #fca5a5;
+  }
+  .btn-delete:hover {
+    background: #fee2e2;
+  }
+</style>
+
+<div class="page-header">
+  <div>
+    <h1>Blog Posts &amp; Audiology Articles</h1>
+    <p style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">
+      Manage patient education guides, clinic announcements and hearing health articles
+    </p>
+  </div>
+  <a href="/admin/blogs/new" class="btn-add">
+    <span>✍️</span> Write New Blog Post
+  </a>
+</div>
+
+<!-- Filters Bar -->
+<form action="/admin/blogs" method="GET" class="filters-card">
+  <div class="search-box">
+    <span class="icon">🔍</span>
+    <input type="text" name="search" placeholder="Search articles by title, keywords or summary..." value="<%= searchQuery %>">
+  </div>
+
+  <select name="category" class="filter-select">
+    <% categories.forEach(c => { %>
+      <option value="<%= c %>" <%= selectedCategory === c ? 'selected' : '' %>><%= c === 'All' ? 'All Categories' : c %></option>
+    <% }); %>
+  </select>
+
+  <button type="submit" class="btn-filter">Filter</button>
+  <% if (searchQuery || selectedCategory !== 'All') { %>
+    <a href="/admin/blogs" class="btn-reset">Clear Filters</a>
+  <% } %>
+</form>
+
+<!-- Table -->
+<div class="table-card">
+  <div style="overflow-x: auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 80px;">Cover</th>
+          <th>Article Title &amp; Slug</th>
+          <th>Category</th>
+          <th>Author &amp; Date</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (blogs && blogs.length > 0) { %>
+          <% blogs.forEach(b => { %>
+            <tr>
+              <td>
+                <img src="<%= b.image %>" alt="" class="blog-thumb">
+              </td>
+              <td>
+                <div style="font-weight: 800; color: #0f172a; font-size: 0.98rem; margin-bottom: 2px;">
+                  <%= b.title %>
+                  <% if (b.featured) { %>
+                    <span style="font-size: 0.72rem; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 9999px; margin-left: 6px; font-weight: 700;">★ Featured</span>
+                  <% } %>
+                </div>
+                <div style="font-size: 0.78rem; color: #94a3b8; font-family: monospace;">
+                  /blog/<%= b.slug %> &bull; <span style="color: #64748b;"><%= b.readTime %></span>
+                </div>
+              </td>
+              <td>
+                <span class="badge-cat"><%= b.category %></span>
+              </td>
+              <td>
+                <div style="font-weight: 600; color: #334155; font-size: 0.88rem;"><%= b.author %></div>
+                <div style="font-size: 0.78rem; color: #94a3b8;"><%= b.date %></div>
+              </td>
+              <td>
+                <% if (b.published) { %>
+                  <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #ecfdf5; color: #059669;">● Published</span>
+                <% } else { %>
+                  <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #f1f5f9; color: #64748b;">Draft</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <a href="/blog/<%= b.slug %>" target="_blank" class="btn-icon" title="View live article">↗ Read</a>
+                  <a href="/admin/blogs/edit/<%= b.id %>" class="btn-icon">✏️ Edit</a>
+                  <form action="/admin/blogs/delete/<%= b.id %>" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to permanently delete this blog post? This action cannot be undone.');">
+                    <button type="submit" class="btn-icon btn-delete" title="Delete article">🗑️</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 40px;">
+              No articles found. <a href="/admin/blogs/new" style="color: #006837; font-weight: 700;">Write the first post!</a>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('layout-footer') %>

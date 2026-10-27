@@ -1,7 +1,10 @@
 const express = require('express');
 const compression = require('compression');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 const fs = require('fs');
+const { contentStore } = require('./data/contentStore');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,9 +14,8 @@ const basePath = fs.existsSync(path.join(process.cwd(), 'data', 'siteData.json')
   ? process.cwd() 
   : __dirname;
 
-// Load Data
+// Load Static Site Data & Gallery
 const siteData = JSON.parse(fs.readFileSync(path.join(basePath, 'data', 'siteData.json'), 'utf-8'));
-const products = JSON.parse(fs.readFileSync(path.join(basePath, 'data', 'products.json'), 'utf-8'));
 const galleryData = JSON.parse(fs.readFileSync(path.join(basePath, 'data', 'gallery.json'), 'utf-8'));
 
 // High-speed compression
@@ -22,9 +24,10 @@ app.use(compression({
   level: 6
 }));
 
-// Body parser
+// Body parser & Cookie parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Cache static files (images, css, js) for blazing fast repeat loads
 app.use(express.static(path.join(basePath, 'public'), {
@@ -41,7 +44,7 @@ app.set('view engine', 'ejs');
 app.use((req, res, next) => {
   res.locals.site = siteData;
   res.locals.currentPath = req.path.replace(/\/+$/, '') || '/';
-  res.locals.products = products;
+  res.locals.products = contentStore.getProducts();
   next();
 });
 
@@ -59,7 +62,8 @@ app.use((req, res, next) => {
 
 // Home Page
 app.get('/', (req, res) => {
-  const featuredProducts = products.filter(p => p.featured).slice(0, 8);
+  const allProducts = contentStore.getProducts();
+  const featuredProducts = allProducts.filter(p => p.featured).slice(0, 8);
   const heroSliderProducts = [
     { title: "Naida V90 UP", slug: "naida-v90-up", img: "/images/micro-phonak-naida-bte-digital-hearing-aid-uttara-bangladesh.png" },
     { title: "Phonak CIC", slug: "hearing-aid-phonak-cic-2", img: "/images/micro-phonak-cic-invisible-in-canal-hearing-aid-dhaka-bangladesh.jpeg" },
@@ -90,7 +94,8 @@ app.get('/', (req, res) => {
 // Products Catalog
 app.get('/products', (req, res) => {
   const { brand, type, search } = req.query;
-  let filtered = [...products];
+  const allProducts = contentStore.getProducts();
+  let filtered = [...allProducts];
 
   if (brand && brand !== 'All') {
     filtered = filtered.filter(p => p.brand.toLowerCase() === brand.toLowerCase());
@@ -103,8 +108,8 @@ app.get('/products', (req, res) => {
     filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.type.toLowerCase().includes(q));
   }
 
-  const brands = ['All', ...new Set(products.map(p => p.brand))];
-  const types = ['All', ...new Set(products.map(p => p.type))];
+  const brands = ['All', ...new Set(allProducts.map(p => p.brand).filter(Boolean))];
+  const types = ['All', ...new Set(allProducts.map(p => p.type).filter(Boolean))];
 
   res.render('products', {
     pageTitle: 'Hearing Aid Products – Micro Hearing Aid Centre Bangladesh',
@@ -120,14 +125,15 @@ app.get('/products', (req, res) => {
 
 // Product Detail Page
 app.get('/product/:slug', (req, res) => {
-  const product = products.find(p => p.slug === req.params.slug);
+  const allProducts = contentStore.getProducts();
+  const product = allProducts.find(p => p.slug === req.params.slug);
   if (!product) {
     return res.status(404).render('404', {
       pageTitle: 'Product Not Found – Micro Hearing Aid Centre'
     });
   }
 
-  const related = products
+  const related = allProducts
     .filter(p => p.brand === product.brand && p.slug !== product.slug)
     .slice(0, 4);
 
@@ -203,11 +209,56 @@ app.get('/hearing-aid-area-of-activities', (req, res) => {
   });
 });
 
-// Blog
+// Blog List Page
 app.get('/blog', (req, res) => {
+  const { category, search } = req.query;
+  const allBlogs = contentStore.getBlogs().filter(b => b.published);
+  let filtered = [...allBlogs];
+
+  if (category && category !== 'All') {
+    filtered = filtered.filter(b => b.category && b.category.toLowerCase() === category.toLowerCase());
+  }
+
+  if (search) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter(b =>
+      (b.title && b.title.toLowerCase().includes(q)) ||
+      (b.category && b.category.toLowerCase().includes(q)) ||
+      (b.excerpt && b.excerpt.toLowerCase().includes(q)) ||
+      (b.content && b.content.toLowerCase().includes(q))
+    );
+  }
+
+  const categories = ['All', ...new Set(allBlogs.map(b => b.category).filter(Boolean))];
+
   res.render('blog', {
     pageTitle: 'Blog & Ear Care Insights – Micro Hearing Aid Centre',
-    metaDescription: 'Read informative articles on hearing loss prevention, audiological health, hearing aid maintenance tips and technological advancements.'
+    metaDescription: 'Read informative articles on hearing loss prevention, audiological health, hearing aid maintenance tips and technological advancements.',
+    blogs: filtered,
+    categories,
+    selectedCategory: category || 'All',
+    searchQuery: search || ''
+  });
+});
+
+// Blog Detail Page
+app.get('/blog/:slug', (req, res) => {
+  const blog = contentStore.getBlogBySlug(req.params.slug);
+  if (!blog || !blog.published) {
+    return res.status(404).render('404', {
+      pageTitle: 'Article Not Found – Micro Hearing Aid Centre'
+    });
+  }
+
+  const relatedBlogs = contentStore.getBlogs()
+    .filter(b => b.published && b.slug !== blog.slug && (b.category === blog.category || b.featured))
+    .slice(0, 3);
+
+  res.render('blog-detail', {
+    pageTitle: `${blog.title} – Micro Hearing Care Centre`,
+    metaDescription: blog.excerpt || 'Audiology guide from Micro Hearing Care Centre Bangladesh.',
+    blog,
+    relatedBlogs
   });
 });
 
@@ -238,9 +289,16 @@ app.get('/contact-us', (req, res) => {
   });
 });
 
+// --- ADMIN CMS BACKEND MOUNT ---
+app.use('/admin', adminRouter);
+
 // --- API Endpoints ---
 app.get('/api/products', (req, res) => {
-  res.json(products);
+  res.json(contentStore.getProducts());
+});
+
+app.get('/api/blogs', (req, res) => {
+  res.json(contentStore.getBlogs().filter(b => b.published));
 });
 
 app.get('/api/gallery', (req, res) => {
@@ -280,7 +338,12 @@ app.get('/sitemap.xml', (req, res) => {
     '/contact-us'
   ];
 
-  products.forEach(p => urls.push(`/product/${p.slug}`));
+  // Dynamic products and blogs
+  const allProducts = contentStore.getProducts();
+  const allBlogs = contentStore.getBlogs().filter(b => b.published);
+
+  allProducts.forEach(p => urls.push(`/product/${p.slug}`));
+  allBlogs.forEach(b => urls.push(`/blog/${b.slug}`));
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -288,7 +351,7 @@ ${urls.map(u => `  <url>
     <loc>https://microhearingaidbd.com${u}</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>${u === '/' ? 'daily' : 'weekly'}</changefreq>
-    <priority>${u === '/' ? '1.0' : u === '/products' || u === '/services' || u === '/contact-us' ? '0.8' : '0.6'}</priority>
+    <priority>${u === '/' ? '1.0' : u === '/products' || u === '/blog' || u === '/services' || u === '/contact-us' ? '0.8' : '0.6'}</priority>
   </url>`).join('\n')}
 </urlset>`;
 

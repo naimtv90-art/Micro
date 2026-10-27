@@ -1,81 +1,110 @@
 <%- include('partials/header') %>
 
-<section class="section" style="background: linear-gradient(135deg, #07381b 0%, #0d562b 100%); color: #fff; padding: 60px 0;">
+<section class="section" style="background: linear-gradient(135deg, #06381d 0%, #006837 50%, #0a4d29 100%); color: #fff; padding: 70px 0;">
   <div class="container" style="text-align: center;">
-    <span class="hero-badge" style="background: rgba(255,255,255,0.15);">Practical Reading</span>
-    <h1 style="font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; margin-bottom: 14px; color: #fff;">
+    <span class="hero-badge" style="background: rgba(255,255,255,0.18); color: #86efac; border: 1px solid rgba(255,255,255,0.25);">Audiology &amp; Patient Insights</span>
+    <h1 style="font-size: clamp(2rem, 3.8vw, 3.2rem); font-weight: 800; margin-bottom: 16px; color: #fff; letter-spacing: -0.02em;">
       MHCC Ear Care &amp; Audiology Blog
     </h1>
-    <p style="max-width: 720px; margin: 0 auto; color: #d1fae5; font-size: 1.15rem; line-height: 1.6;">
-      Practical reading on hearing health, digital hearing aids, and everyday ear care tips from the audiologists at Micro Hearing Care Centre.
+    <p style="max-width: 740px; margin: 0 auto; color: #d1fae5; font-size: 1.15rem; line-height: 1.65;">
+      Practical audiology reading, digital hearing aid maintenance guides, and everyday ear care advice from the clinical audiologists at Micro Hearing Care Centre Bangladesh.
     </p>
   </div>
 </section>
 
-<!-- Blog Articles Grid -->
-<section class="section">
+<!-- Blog Articles Grid Section -->
+<section class="section" style="padding-top: 40px; padding-bottom: 80px; background: #f8faf9;">
   <div class="container">
-    <div class="grid-3-col">
-      <!-- Post 1 -->
-      <article style="background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
-        <div style="background: #eaf5ee; height: 180px; display: flex; align-items: center; justify-content: center; font-size: 50px;">
-          🦻
-        </div>
-        <div style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; margin-bottom: 8px;">General Audiology</span>
-          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; line-height: 1.4;">
-            Hello World! Welcome to Micro Hearing Care Centre
-          </h2>
-          <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 18px; flex-grow: 1;">
-            Welcome to our online hearing healthcare resource. Discover why early diagnosis of hearing loss is crucial and how digital micro technology restores natural clarity.
-          </p>
-          <div style="padding-top: 14px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.85rem; color: #94a3b8;">5 min read</span>
-            <span style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Read Guide &rarr;</span>
-          </div>
-        </div>
-      </article>
 
-      <!-- Post 2 -->
-      <article style="background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
-        <div style="background: #f0f9ff; height: 180px; display: flex; align-items: center; justify-content: center; font-size: 50px;">
-          🔍
-        </div>
-        <div style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
-          <span style="font-size: 0.8rem; font-weight: 700; color: #0284c7; text-transform: uppercase; margin-bottom: 8px;">Device Maintenance</span>
-          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; line-height: 1.4;">
-            How to Clean &amp; Protect Hearing Aids in Humid Weather
-          </h2>
-          <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 18px; flex-grow: 1;">
-            Essential maintenance tips for Bangladesh's humid seasons: using drying capsules, clearing earwax cerumen guards, and protecting micro-receivers.
-          </p>
-          <div style="padding-top: 14px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.85rem; color: #94a3b8;">4 min read</span>
-            <span style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Read Guide &rarr;</span>
-          </div>
-        </div>
-      </article>
+    <!-- Categories & Search Filter Bar -->
+    <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 18px 24px; border: 1px solid var(--color-border); margin-bottom: 40px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin-right: 6px;">Filter By:</span>
+        <% categories.forEach(cat => { %>
+          <a href="/blog?category=<%= encodeURIComponent(cat) %><%= searchQuery ? ('&search=' + encodeURIComponent(searchQuery)) : '' %>" 
+             style="padding: 6px 16px; border-radius: 9999px; font-size: 0.84rem; font-weight: 700; text-decoration: none; transition: all 0.2s ease; <%= selectedCategory === cat ? 'background: var(--color-primary); color: #fff;' : 'background: #f1f5f9; color: #475569;' %>">
+            <%= cat %>
+          </a>
+        <% }); %>
+      </div>
 
-      <!-- Post 3 -->
-      <article style="background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
-        <div style="background: #fdf2f8; height: 180px; display: flex; align-items: center; justify-content: center; font-size: 50px;">
-          👶
-        </div>
-        <div style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
-          <span style="font-size: 0.8rem; font-weight: 700; color: #db2777; text-transform: uppercase; margin-bottom: 8px;">Pediatric Audiology</span>
-          <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 10px; line-height: 1.4;">
-            Early Signs of Hearing Loss in Children &amp; Toddlers
-          </h2>
-          <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 18px; flex-grow: 1;">
-            A parent’s guide to identifying delayed speech development, lack of startle response to loud sounds, and pediatric hearing screening solutions.
-          </p>
-          <div style="padding-top: 14px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.85rem; color: #94a3b8;">6 min read</span>
-            <span style="font-size: 0.9rem; font-weight: 700; color: var(--color-primary);">Read Guide &rarr;</span>
-          </div>
-        </div>
-      </article>
+      <form action="/blog" method="GET" style="display: flex; gap: 8px;">
+        <% if (selectedCategory && selectedCategory !== 'All') { %>
+          <input type="hidden" name="category" value="<%= selectedCategory %>">
+        <% } %>
+        <input type="text" name="search" placeholder="Search audiology guides..." value="<%= searchQuery || '' %>" style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 9999px; font-size: 0.88rem; outline: none; width: 220px;">
+        <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 9999px; padding: 6px 16px;">Search</button>
+      </form>
     </div>
+
+    <!-- Articles Grid -->
+    <% if (blogs && blogs.length > 0) { %>
+      <div class="grid-3-col">
+        <% blogs.forEach(post => { %>
+          <article style="background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: transform 0.25s ease, box-shadow 0.25s ease;">
+            <a href="/blog/<%= post.slug %>" style="display: block; overflow: hidden; background: #eaf5ee; height: 210px; position: relative;">
+              <img src="<%= post.image %>" alt="<%= post.title %> – Micro Hearing Care Centre" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+              <span style="position: absolute; top: 14px; left: 14px; background: rgba(0, 104, 55, 0.9); color: #fff; font-size: 0.75rem; font-weight: 800; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase;">
+                <%= post.category %>
+              </span>
+            </a>
+
+            <div style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
+              <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; display: flex; gap: 10px;">
+                <span>📅 <%= post.date %></span>
+                <span>&bull;</span>
+                <span>⏱ <%= post.readTime %></span>
+              </div>
+
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; line-height: 1.35;">
+                <a href="/blog/<%= post.slug %>" style="color: inherit; text-decoration: none;">
+                  <%= post.title %>
+                </a>
+              </h2>
+
+              <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; flex-grow: 1;">
+                <%= post.excerpt %>
+              </p>
+
+              <div style="padding-top: 16px; border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">
+                  By <%= post.author %>
+                </span>
+                <a href="/blog/<%= post.slug %>" style="font-size: 0.9rem; font-weight: 800; color: var(--color-primary); text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                  Read Article &rarr;
+                </a>
+              </div>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div style="background: #ffffff; border-radius: 16px; padding: 60px 24px; text-align: center; border: 1px solid var(--color-border);">
+        <span style="font-size: 3rem; display: block; margin-bottom: 12px;">🔍</span>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">No matching articles found</h3>
+        <p style="color: #64748b; margin-bottom: 20px;">Try adjusting your search keywords or browsing all categories.</p>
+        <a href="/blog" class="btn btn-primary">View All Blog Articles</a>
+      </div>
+    <% } %>
+
+    <!-- Patient Consultation Banner -->
+    <div style="margin-top: 60px; background: linear-gradient(135deg, #eaf5ee 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: var(--radius-xl); padding: 40px; text-align: center;">
+      <h3 style="font-size: 1.7rem; font-weight: 800; color: #06381d; margin-bottom: 12px;">
+        Have Questions About Your Hearing Health?
+      </h3>
+      <p style="max-width: 650px; margin: 0 auto 24px; color: #166534; font-size: 1.05rem; line-height: 1.6;">
+        Book a professional hearing evaluation with Micro Hearing Care Centre's certified audiology specialists in Uttara or Gazipur.
+      </p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-lg" data-open-appointment="uttara">
+          Book Hearing Test
+        </button>
+        <a href="https://wa.me/8801787519995?text=Hello%20Micro%20Hearing%20Care%20Centre,%20I%20read%20your%20blog%20and%20want%20to%20consult%20an%20audiologist" target="_blank" class="btn btn-whatsapp btn-lg">
+          Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+
   </div>
 </section>
 

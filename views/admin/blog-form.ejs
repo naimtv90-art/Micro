@@ -1,0 +1,489 @@
+<%- include('layout-header', { pageTitle: (isEdit ? 'Edit Blog Post' : 'Write New Blog Post') + ' – Micro Hearing CMS', activeNav: 'blogs' }) %>
+
+<style>
+  .form-container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .form-header h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #06381d;
+  }
+  .form-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--admin-card-border);
+    padding: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    margin-bottom: 24px;
+  }
+  .form-section-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 768px) {
+    .form-grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+  }
+  .form-label .required {
+    color: #dc2626;
+  }
+  .form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    background: #ffffff;
+  }
+  .form-control:focus {
+    outline: none;
+    border-color: #006837;
+    box-shadow: 0 0 0 3px rgba(0, 104, 55, 0.12);
+  }
+  .form-hint {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 6px;
+  }
+
+  /* Upload Zone */
+  .upload-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .upload-dropzone:hover {
+    border-color: #006837;
+    background: #f0fdf4;
+  }
+  .preview-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 14px;
+    padding: 14px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+  .preview-img {
+    width: 120px;
+    height: 75px;
+    object-fit: cover;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+  }
+
+  /* Editor Toolbar */
+  .editor-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 8px;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: #006837;
+    color: #ffffff;
+    border-color: #006837;
+  }
+  .editor-toolbar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+  }
+  .tool-btn {
+    padding: 5px 10px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+  }
+  .tool-btn:hover {
+    background: #e2e8f0;
+  }
+  .content-editor {
+    width: 100%;
+    min-height: 380px;
+    padding: 16px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0 0 10px 10px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #0f172a;
+    resize: vertical;
+  }
+  .content-editor:focus {
+    outline: none;
+    border-color: #006837;
+  }
+  .live-preview-box {
+    display: none;
+    min-height: 380px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    overflow-y: auto;
+    line-height: 1.7;
+    color: #334155;
+  }
+  .live-preview-box h2 {
+    color: #06381d;
+    margin: 20px 0 10px;
+  }
+  .live-preview-box h3 {
+    color: #0f172a;
+    margin: 16px 0 8px;
+  }
+  .live-preview-box p {
+    margin-bottom: 14px;
+  }
+  .live-preview-box ul, .live-preview-box ol {
+    margin-left: 24px;
+    margin-bottom: 14px;
+  }
+
+  /* Switches */
+  .switch-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: #f8fafc;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #1e293b;
+    cursor: pointer;
+  }
+  .checkbox-label input {
+    width: 18px;
+    height: 18px;
+    accent-color: #006837;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .btn-submit {
+    padding: 13px 32px;
+    background: linear-gradient(135deg, #006837 0%, #0a4d29 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 104, 55, 0.3);
+  }
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #0a4d29 0%, #06381d 100%);
+  }
+  .btn-cancel {
+    padding: 13px 24px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>
+
+<div class="form-container">
+  <div class="form-header">
+    <div>
+      <h1><%= isEdit ? 'Edit Blog Article' : 'Write Audiology Article' %></h1>
+      <p style="color: #64748b; font-size: 0.92rem; margin-top: 4px;">
+        <%= isEdit ? 'Update hearing health guides, tips and clinical publications.' : 'Publish a new educational article for patients and website visitors.' %>
+      </p>
+    </div>
+    <a href="/admin/blogs" class="btn-cancel">&larr; Back to Articles</a>
+  </div>
+
+  <form action="<%= isEdit ? ('/admin/blogs/edit/' + blog.id) : '/admin/blogs/new' %>" method="POST" enctype="multipart/form-data">
+    <div class="form-card">
+      <div class="form-section-title">
+        <span>📝</span> Article Metadata
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="title">Article Headline / Title <span class="required">*</span></label>
+        <input type="text" id="title" name="title" class="form-control" placeholder="e.g. 7 Early Signs of Hearing Loss and When to See an Audiologist" required value="<%= blog.title %>">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label" for="slug">URL Slug</label>
+          <input type="text" id="slug" name="slug" class="form-control" placeholder="e.g. early-signs-of-hearing-loss" value="<%= blog.slug %>">
+          <div class="form-hint">Public link: <code>/blog/&lt;slug&gt;</code></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="categorySelect">Category <span class="required">*</span></label>
+          <select id="categorySelect" name="category" class="form-control" onchange="toggleCustomCategory(this)">
+            <% categories.forEach(c => { %>
+              <option value="<%= c %>" <%= blog.category === c ? 'selected' : '' %>><%= c %></option>
+            <% }); %>
+            <option value="General Audiology" <%= !categories.includes(blog.category) && blog.category === 'General Audiology' ? 'selected' : '' %>>General Audiology</option>
+            <option value="Device Maintenance" <%= blog.category === 'Device Maintenance' ? 'selected' : '' %>>Device Maintenance</option>
+            <option value="Pediatric Audiology" <%= blog.category === 'Pediatric Audiology' ? 'selected' : '' %>>Pediatric Audiology</option>
+            <option value="Hearing Technology" <%= blog.category === 'Hearing Technology' ? 'selected' : '' %>>Hearing Technology</option>
+            <option value="__custom__">+ Add New Category...</option>
+          </select>
+          <div id="customCategoryWrap" style="display: none; margin-top: 10px;">
+            <input type="text" name="customCategory" class="form-control" placeholder="Enter new category name">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label" for="author">Author Name / Credential</label>
+          <input type="text" id="author" name="author" class="form-control" placeholder="Dr. Audiology Team, MHCC" value="<%= blog.author %>">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="readTime">Read Time Estimate</label>
+          <input type="text" id="readTime" name="readTime" class="form-control" placeholder="e.g. 5 min read" value="<%= blog.readTime %>">
+          <div class="form-hint">Leave blank to auto-calculate from word count.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="excerpt">Excerpt / Meta Description</label>
+        <textarea id="excerpt" name="excerpt" rows="2" class="form-control" placeholder="Brief 1-2 sentence teaser for social sharing and search engines..."><%= blog.excerpt %></textarea>
+      </div>
+    </div>
+
+    <!-- Media / Cover Image -->
+    <div class="form-card">
+      <div class="form-section-title">
+        <span>🖼️</span> Featured Cover Image
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload Article Cover (JPG, PNG, WebP)</label>
+        <div class="upload-dropzone" onclick="document.getElementById('imageFileInput').click()">
+          <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">📷</span>
+          <strong style="color: #006837;">Click to select cover image</strong> or drag and drop file here
+          <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Recommended: 1200x630px landscape for best social previews</p>
+          <input type="file" id="imageFileInput" name="imageFile" accept="image/*" style="display: none;" onchange="previewUpload(this)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="imageUrl">Or Enter Image URL / Existing Asset Path</label>
+        <input type="text" id="imageUrl" name="imageUrl" class="form-control" placeholder="/images/micro-audiologist-hearing-aid-fitting-uttara-bangladesh.jpg" value="<%= blog.image %>" oninput="previewUrl(this.value)">
+      </div>
+
+      <div class="preview-wrapper" id="previewBox" style="<%= blog.image ? '' : 'display: none;' %>">
+        <img src="<%= blog.image || '' %>" alt="Preview" class="preview-img" id="imgPreview">
+        <div>
+          <strong style="color: #0f172a; display: block; font-size: 0.92rem;">Active Cover Preview</strong>
+          <span style="font-size: 0.8rem; color: #64748b;" id="previewText"><%= blog.image || 'Image loaded' %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article Body & Editor -->
+    <div class="form-card">
+      <div class="form-section-title">
+        <span>📖</span> Article Content
+      </div>
+
+      <div class="editor-tabs">
+        <button type="button" class="tab-btn active" id="btnTabWrite" onclick="switchTab('write')">✏️ Write (HTML / Markdown)</button>
+        <button type="button" class="tab-btn" id="btnTabPreview" onclick="switchTab('preview')">👁️ Live Preview</button>
+      </div>
+
+      <div id="writeSection">
+        <div class="editor-toolbar">
+          <button type="button" class="tool-btn" onclick="insertTag('<h2>', '</h2>')">H2 Heading</button>
+          <button type="button" class="tool-btn" onclick="insertTag('<h3>', '</h3>')">H3 Heading</button>
+          <button type="button" class="tool-btn" onclick="insertTag('<strong>', '</strong>')"><b>B</b></button>
+          <button type="button" class="tool-btn" onclick="insertTag('<em>', '</em>')"><i>I</i></button>
+          <button type="button" class="tool-btn" onclick="insertTag('<ul>\n  <li>', '</li>\n</ul>')">Bullet List</button>
+          <button type="button" class="tool-btn" onclick="insertTag('<ol>\n  <li>', '</li>\n</ol>')">Numbered List</button>
+          <button type="button" class="tool-btn" onclick="insertTag('<blockquote>', '</blockquote>')">Quote</button>
+          <button type="button" class="tool-btn" onclick="insertTag('<p>', '</p>')">Paragraph</button>
+        </div>
+        <textarea id="articleContent" name="content" class="content-editor" placeholder="Write your full article body in clean HTML (<p>, <h2>, <ul>, <strong>)..." required><%= blog.content %></textarea>
+      </div>
+
+      <div id="previewSection" class="live-preview-box"></div>
+    </div>
+
+    <!-- Visibility & Publish -->
+    <div class="form-card">
+      <div class="switch-row">
+        <label class="checkbox-label">
+          <input type="checkbox" name="published" <%= blog.published ? 'checked' : '' %>>
+          <span>Publish Live (Visible on public blog &amp; search engines)</span>
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" name="featured" <%= blog.featured ? 'checked' : '' %>>
+          <span>Featured Article Badge</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a href="/admin/blogs" class="btn-cancel">Cancel</a>
+      <button type="submit" class="btn-submit">
+        <%= isEdit ? '💾 Update Article' : '✓ Publish Article' %>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const isEditMode = <%= isEdit ? 'true' : 'false' %>;
+  const titleInput = document.getElementById('title');
+  const slugInput = document.getElementById('slug');
+
+  if (!isEditMode) {
+    titleInput.addEventListener('input', () => {
+      slugInput.value = titleInput.value
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
+    });
+  }
+
+  function toggleCustomCategory(select) {
+    const wrap = document.getElementById('customCategoryWrap');
+    wrap.style.display = select.value === '__custom__' ? 'block' : 'none';
+  }
+
+  function previewUpload(input) {
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('imgPreview').src = e.target.result;
+        document.getElementById('previewBox').style.display = 'flex';
+        document.getElementById('previewText').textContent = file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function previewUrl(url) {
+    if (url && url.trim()) {
+      document.getElementById('imgPreview').src = url.trim();
+      document.getElementById('previewBox').style.display = 'flex';
+      document.getElementById('previewText').textContent = url.trim();
+    }
+  }
+
+  function insertTag(openTag, closeTag) {
+    const textarea = document.getElementById('articleContent');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.substring(start, end) || 'text';
+    const replacement = openTag + selected + closeTag;
+    textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + openTag.length, start + openTag.length + selected.length);
+  }
+
+  function switchTab(mode) {
+    const writeSec = document.getElementById('writeSection');
+    const prevSec = document.getElementById('previewSection');
+    const btnWrite = document.getElementById('btnTabWrite');
+    const btnPrev = document.getElementById('btnTabPreview');
+
+    if (mode === 'preview') {
+      prevSec.innerHTML = document.getElementById('articleContent').value || '<p><em>No content entered yet.</em></p>';
+      writeSec.style.display = 'none';
+      prevSec.style.display = 'block';
+      btnPrev.classList.add('active');
+      btnWrite.classList.remove('active');
+    } else {
+      writeSec.style.display = 'block';
+      prevSec.style.display = 'none';
+      btnWrite.classList.add('active');
+      btnPrev.classList.remove('active');
+    }
+  }
+</script>
+
+<%- include('layout-footer') %>

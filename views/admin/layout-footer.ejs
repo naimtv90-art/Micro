@@ -1,0 +1,36 @@
+    </div><!-- /.admin-content -->
+
+    <footer style="padding: 20px 32px; font-size: 0.85rem; color: #94a3b8; border-top: 1px solid var(--admin-card-border); background: #ffffff; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+      <div>
+        <strong>Micro Hearing Care Centre</strong> &bull; Integrated Content Management System
+      </div>
+      <div>
+        Uttara Head Office &bull; Gazipur Branch &bull; Helpline: 01787 51 999 5
+      </div>
+    </footer>
+  </div><!-- /.admin-main -->
+
+  <script>
+    // Mobile sidebar toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('adminSidebar');
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+      });
+    }
+
+    // Auto-dismiss alert after 5s
+    setTimeout(() => {
+      document.querySelectorAll('[onclick="this.parentElement.remove()"]').forEach(btn => {
+        const parent = btn.parentElement;
+        if (parent) {
+          parent.style.transition = 'opacity 0.5s ease';
+          parent.style.opacity = '0';
+          setTimeout(() => parent.remove(), 500);
+        }
+      });
+    }, 5000);
+  </script>
+</body>
+</html>
