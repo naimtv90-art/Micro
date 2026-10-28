@@ -13,39 +13,79 @@ const ADMIN_PASS = process.env.ADMIN_PASS || 'micro2026!';
 const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || 'mhcc_super_secret_admin_key_uttara_2026';
 const COOKIE_NAME = 'mhcc_admin_token';
 
-// Ensure upload directory exists
-const UPLOAD_DIR = path.join(__dirname, '..', 'public', 'images', 'cms');
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// Base path resolution for local run and Vercel serverless
+const basePath = fs.existsSync(path.join(process.cwd(), 'public'))
+  ? process.cwd()
+  : path.join(__dirname, '..');
+const UPLOAD_DIR = path.join(basePath, 'public', 'images', 'cms');
+
+try {
+  if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+} catch (e) {
+  // Gracefully ignored in read-only environments
 }
 
-// Multer Storage Configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase();
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E6);
-    cb(null, `mhcc-${base}-${uniqueSuffix}${ext}`);
-  }
-});
+// In-memory multer storage: works seamlessly across local, serverless (Vercel), and containers
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|webp|svg|gif/;
+    if (!file || !file.originalname) {
+      return cb(null, true);
+    }
+    const allowedExt = /jpeg|jpg|png|webp|svg|gif|avif|bmp|jfif|heic|heif|tiff/i;
     const ext = path.extname(file.originalname).toLowerCase().replace('.', '');
-    const mime = file.mimetype;
-    if (allowed.test(ext) || allowed.test(mime)) {
+    const mime = file.mimetype || '';
+    if (mime.startsWith('image/') || allowedExt.test(ext) || allowedExt.test(mime)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files (jpg, png, webp, svg, gif) are allowed'));
+      cb(new Error('Only image files (JPG, PNG, WebP, SVG, GIF, AVIF, BMP, JFIF) are allowed'));
     }
   }
 });
+
+// Helper to save uploaded file: writes to static disk when writable, falls back to Data URI if read-only
+function saveUploadedFile(file) {
+  if (!file || !file.buffer || file.buffer.length === 0) return null;
+  const ext = (path.extname(file.originalname) || '.jpg').toLowerCase();
+  const base = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase() || 'image';
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E6);
+  const filename = `mhcc-${base}-${uniqueSuffix}${ext}`;
+  const diskPath = path.join(UPLOAD_DIR, filename);
+
+  try {
+    if (!fs.existsSync(UPLOAD_DIR)) {
+      fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+    }
+    fs.writeFileSync(diskPath, file.buffer);
+    return `/images/cms/${filename}`;
+  } catch (fsErr) {
+    console.warn('[CMS Upload] File system write unavailable, using Base64 Data URL fallback:', fsErr.message);
+    const mime = file.mimetype || 'image/jpeg';
+    return `data:${mime};base64,${file.buffer.toString('base64')}`;
+  }
+}
+
+// Multer error-handling middleware wrapper
+function handleUpload(fieldName, getRedirectUrl) {
+  return (req, res, next) => {
+    upload.single(fieldName)(req, res, (err) => {
+      if (err) {
+        console.error(`[Upload Error on ${req.originalUrl}]:`, err);
+        const errorMsg = err.code === 'LIMIT_FILE_SIZE'
+          ? 'Image file is too large (maximum size is 15MB).'
+          : (err.message || 'Error processing uploaded file.');
+        const redirectUrl = typeof getRedirectUrl === 'function' ? getRedirectUrl(req) : getRedirectUrl;
+        return res.redirect(`${redirectUrl}?error=${encodeURIComponent(errorMsg)}`);
+      }
+      next();
+    });
+  };
+}
 
 // Helper: Token Generation & Verification
 function createToken(username) {
@@ -229,28 +269,33 @@ router.get('/products/new', (req, res) => {
 });
 
 // Create Product Handler
-router.post('/products/new', upload.single('imageFile'), (req, res) => {
+router.post('/products/new', handleUpload('imageFile', '/admin/products/new'), (req, res) => {
   try {
     const { title, slug, brand, customBrand, type, customType, originalUrl, featured, inStock, description, imageUrl } = req.body;
 
-    let imagePath = imageUrl || '/images/micro-rexton-hearing-aid-batteries-dhaka-bangladesh.webp';
+    if (!title || !title.trim()) {
+      return res.redirect('/admin/products/new?error=' + encodeURIComponent('Product Title is required.'));
+    }
+
+    let imagePath = imageUrl && imageUrl.trim() ? imageUrl.trim() : '/images/micro-rexton-hearing-aid-batteries-dhaka-bangladesh.webp';
     if (req.file) {
-      imagePath = `/images/cms/${req.file.filename}`;
+      const saved = saveUploadedFile(req.file);
+      if (saved) imagePath = saved;
     }
 
     const finalBrand = brand === '__custom__' && customBrand ? customBrand.trim() : (brand || 'Micro Hearing');
     const finalType = type === '__custom__' && customType ? customType.trim() : (type || 'Behind-the-Ear (BTE)');
 
     const newProduct = contentStore.createProduct({
-      title,
-      slug,
+      title: title.trim(),
+      slug: slug ? slug.trim() : '',
       brand: finalBrand,
       type: finalType,
       image: imagePath,
-      originalUrl,
+      originalUrl: originalUrl ? originalUrl.trim() : '',
       featured: featured === 'on' || featured === 'true' || featured === true,
       inStock: inStock === 'on' || inStock === 'true' || inStock === true,
-      description
+      description: description ? description.trim() : ''
     });
 
     res.redirect(`/admin/products?success=${encodeURIComponent(`Product "${newProduct.title}" created successfully!`)}`);
@@ -279,7 +324,7 @@ router.get('/products/edit/:id', (req, res) => {
 });
 
 // Update Product Handler
-router.post('/products/edit/:id', upload.single('imageFile'), (req, res) => {
+router.post('/products/edit/:id', handleUpload('imageFile', (req) => `/admin/products/edit/${req.params.id}`), (req, res) => {
   try {
     const { title, slug, brand, customBrand, type, customType, originalUrl, featured, inStock, description, imageUrl } = req.body;
 
@@ -288,9 +333,14 @@ router.post('/products/edit/:id', upload.single('imageFile'), (req, res) => {
       return res.redirect(`/admin/products?error=${encodeURIComponent('Product not found')}`);
     }
 
+    if (!title || !title.trim()) {
+      return res.redirect(`/admin/products/edit/${req.params.id}?error=${encodeURIComponent('Product Title is required.')}`);
+    }
+
     let imagePath = existing.image;
     if (req.file) {
-      imagePath = `/images/cms/${req.file.filename}`;
+      const saved = saveUploadedFile(req.file);
+      if (saved) imagePath = saved;
     } else if (imageUrl && imageUrl.trim()) {
       imagePath = imageUrl.trim();
     }
@@ -299,15 +349,15 @@ router.post('/products/edit/:id', upload.single('imageFile'), (req, res) => {
     const finalType = type === '__custom__' && customType ? customType.trim() : (type || existing.type);
 
     const updated = contentStore.updateProduct(req.params.id, {
-      title,
-      slug,
+      title: title.trim(),
+      slug: slug ? slug.trim() : existing.slug,
       brand: finalBrand,
       type: finalType,
       image: imagePath,
-      originalUrl,
+      originalUrl: originalUrl ? originalUrl.trim() : '',
       featured: featured === 'on' || featured === 'true' || featured === true,
       inStock: inStock === 'on' || inStock === 'true' || inStock === true,
-      description
+      description: description ? description.trim() : ''
     });
 
     res.redirect(`/admin/products?success=${encodeURIComponent(`Product "${updated.title}" updated successfully!`)}`);
@@ -387,26 +437,31 @@ router.get('/blogs/new', (req, res) => {
 });
 
 // Create Blog Post Handler
-router.post('/blogs/new', upload.single('imageFile'), (req, res) => {
+router.post('/blogs/new', handleUpload('imageFile', '/admin/blogs/new'), (req, res) => {
   try {
     const { title, slug, category, customCategory, author, readTime, excerpt, content, featured, published, imageUrl } = req.body;
 
-    let imagePath = imageUrl || '/images/micro-audiologist-hearing-aid-fitting-uttara-bangladesh.jpg';
+    if (!title || !title.trim()) {
+      return res.redirect('/admin/blogs/new?error=' + encodeURIComponent('Article Title is required.'));
+    }
+
+    let imagePath = imageUrl && imageUrl.trim() ? imageUrl.trim() : '/images/micro-audiologist-hearing-aid-fitting-uttara-bangladesh.jpg';
     if (req.file) {
-      imagePath = `/images/cms/${req.file.filename}`;
+      const saved = saveUploadedFile(req.file);
+      if (saved) imagePath = saved;
     }
 
     const finalCategory = category === '__custom__' && customCategory ? customCategory.trim() : (category || 'General Audiology');
 
     const newBlog = contentStore.createBlog({
-      title,
-      slug,
+      title: title.trim(),
+      slug: slug ? slug.trim() : '',
       category: finalCategory,
-      author,
-      readTime,
+      author: author ? author.trim() : 'Dr. Audiology Team, MHCC',
+      readTime: readTime ? readTime.trim() : '',
       image: imagePath,
-      excerpt,
-      content,
+      excerpt: excerpt ? excerpt.trim() : '',
+      content: content ? content.trim() : '<p>Write your article here...</p>',
       featured: featured === 'on' || featured === 'true' || featured === true,
       published: published === 'on' || published === 'true' || published === true
     });
@@ -436,7 +491,7 @@ router.get('/blogs/edit/:id', (req, res) => {
 });
 
 // Update Blog Post Handler
-router.post('/blogs/edit/:id', upload.single('imageFile'), (req, res) => {
+router.post('/blogs/edit/:id', handleUpload('imageFile', (req) => `/admin/blogs/edit/${req.params.id}`), (req, res) => {
   try {
     const { title, slug, category, customCategory, author, date, readTime, excerpt, content, featured, published, imageUrl } = req.body;
 
@@ -445,9 +500,14 @@ router.post('/blogs/edit/:id', upload.single('imageFile'), (req, res) => {
       return res.redirect(`/admin/blogs?error=${encodeURIComponent('Blog post not found')}`);
     }
 
+    if (!title || !title.trim()) {
+      return res.redirect(`/admin/blogs/edit/${req.params.id}?error=${encodeURIComponent('Article Title is required.')}`);
+    }
+
     let imagePath = existing.image;
     if (req.file) {
-      imagePath = `/images/cms/${req.file.filename}`;
+      const saved = saveUploadedFile(req.file);
+      if (saved) imagePath = saved;
     } else if (imageUrl && imageUrl.trim()) {
       imagePath = imageUrl.trim();
     }
@@ -455,15 +515,15 @@ router.post('/blogs/edit/:id', upload.single('imageFile'), (req, res) => {
     const finalCategory = category === '__custom__' && customCategory ? customCategory.trim() : (category || existing.category);
 
     const updated = contentStore.updateBlog(req.params.id, {
-      title,
-      slug,
+      title: title.trim(),
+      slug: slug ? slug.trim() : existing.slug,
       category: finalCategory,
-      author,
-      date,
-      readTime,
+      author: author ? author.trim() : existing.author,
+      date: date ? date.trim() : existing.date,
+      readTime: readTime ? readTime.trim() : existing.readTime,
       image: imagePath,
-      excerpt,
-      content,
+      excerpt: excerpt ? excerpt.trim() : existing.excerpt,
+      content: content ? content.trim() : existing.content,
       featured: featured === 'on' || featured === 'true' || featured === true,
       published: published === 'on' || published === 'true' || published === true
     });
@@ -489,15 +549,21 @@ router.post('/blogs/delete/:id', (req, res) => {
 });
 
 // --- ASYNC API ENDPOINTS FOR CMS ---
-router.post('/api/upload', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: 'No file uploaded.' });
-  }
-  return res.json({
-    success: true,
-    url: `/images/cms/${req.file.filename}`,
-    filename: req.file.filename,
-    size: req.file.size
+router.post('/api/upload', (req, res) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ success: false, error: err.message });
+    }
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No file uploaded.' });
+    }
+    const url = saveUploadedFile(req.file);
+    return res.json({
+      success: true,
+      url,
+      filename: req.file.originalname,
+      size: req.file.size
+    });
   });
 });
 

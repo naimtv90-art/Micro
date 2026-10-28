@@ -1,20 +1,52 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-const PRODUCTS_FILE = path.join(__dirname, 'products.json');
-const BLOGS_FILE = path.join(__dirname, 'blogs.json');
-const GALLERY_FILE = path.join(__dirname, 'gallery.json');
-const SITE_DATA_FILE = path.join(__dirname, 'siteData.json');
+// Robust base directory resolution for local development and Vercel serverless
+const basePath = fs.existsSync(path.join(process.cwd(), 'data', 'siteData.json'))
+  ? process.cwd()
+  : path.join(__dirname, '..');
+
+const LOCAL_PRODUCTS_FILE = path.join(basePath, 'data', 'products.json');
+const LOCAL_BLOGS_FILE = path.join(basePath, 'data', 'blogs.json');
+const LOCAL_GALLERY_FILE = path.join(basePath, 'data', 'gallery.json');
+const LOCAL_SITE_DATA_FILE = path.join(basePath, 'data', 'siteData.json');
+
+// Check if local directory is writable
+let isLocalWritable = false;
+try {
+  const testFile = path.join(basePath, 'data', '.write_test');
+  fs.writeFileSync(testFile, '1');
+  fs.unlinkSync(testFile);
+  isLocalWritable = true;
+} catch (e) {
+  isLocalWritable = false;
+}
+
+const PRODUCTS_FILE = isLocalWritable 
+  ? LOCAL_PRODUCTS_FILE 
+  : path.join(os.tmpdir(), 'micro_products.json');
+
+const BLOGS_FILE = isLocalWritable 
+  ? LOCAL_BLOGS_FILE 
+  : path.join(os.tmpdir(), 'micro_blogs.json');
+
+const GALLERY_FILE = LOCAL_GALLERY_FILE;
+const SITE_DATA_FILE = LOCAL_SITE_DATA_FILE;
 
 // Memory caches
 let productsCache = null;
 let blogsCache = null;
 let siteDataCache = null;
 
-function readJsonFile(filePath, fallback = []) {
+function readJsonFile(filePath, fallback = [], seedFile = null) {
   try {
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(data);
+    } else if (seedFile && fs.existsSync(seedFile)) {
+      const data = fs.readFileSync(seedFile, 'utf8');
+      try { fs.writeFileSync(filePath, data, 'utf8'); } catch (e) {}
       return JSON.parse(data);
     }
   } catch (err) {
@@ -65,7 +97,7 @@ const contentStore = {
   // PRODUCTS
   getProducts() {
     if (!productsCache) {
-      productsCache = readJsonFile(PRODUCTS_FILE, []);
+      productsCache = readJsonFile(PRODUCTS_FILE, [], LOCAL_PRODUCTS_FILE);
     }
     return productsCache;
   },
@@ -165,7 +197,7 @@ const contentStore = {
   // BLOGS
   getBlogs() {
     if (!blogsCache) {
-      blogsCache = readJsonFile(BLOGS_FILE, []);
+      blogsCache = readJsonFile(BLOGS_FILE, [], LOCAL_BLOGS_FILE);
     }
     return blogsCache;
   },

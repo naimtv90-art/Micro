@@ -484,6 +484,20 @@
       btnPrev.classList.remove('active');
     }
   }
+
+  // Ensure form submits cleanly and doesn't get blocked if on Preview tab
+  const blogForm = document.querySelector('form');
+  if (blogForm) {
+    blogForm.addEventListener('submit', function() {
+      switchTab('write');
+      const submitBtn = blogForm.querySelector('.btn-submit');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Publishing... Please wait';
+        submitBtn.style.opacity = '0.7';
+      }
+    });
+  }
 </script>
 
 <%- include('layout-footer') %>

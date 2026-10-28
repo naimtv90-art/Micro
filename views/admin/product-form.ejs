@@ -291,7 +291,7 @@
 
       <div class="form-group">
         <label class="form-label" for="originalUrl">Original URL / Manufacturer Reference (Optional)</label>
-        <input type="url" id="originalUrl" name="originalUrl" class="form-control" placeholder="https://microhearingaidbd.com/product/..." value="<%= product.originalUrl || '' %>">
+        <input type="text" id="originalUrl" name="originalUrl" class="form-control" placeholder="https://microhearingaidbd.com/product/..." value="<%= product.originalUrl || '' %>">
       </div>
     </div>
 
@@ -352,6 +352,19 @@
       document.getElementById('previewBox').style.display = 'flex';
       document.getElementById('previewText').textContent = url.trim();
     }
+  }
+
+  // Prevent multiple submits and show loading
+  const productForm = document.querySelector('form');
+  if (productForm) {
+    productForm.addEventListener('submit', function() {
+      const submitBtn = productForm.querySelector('.btn-submit');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Saving... Please wait';
+        submitBtn.style.opacity = '0.7';
+      }
+    });
   }
 </script>
 
