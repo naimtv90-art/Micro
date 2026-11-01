@@ -9,6 +9,8 @@ const basePath = fs.existsSync(path.join(process.cwd(), 'data', 'siteData.json')
 
 const LOCAL_PRODUCTS_FILE = path.join(basePath, 'data', 'products.json');
 const LOCAL_BLOGS_FILE = path.join(basePath, 'data', 'blogs.json');
+const LOCAL_APPOINTMENTS_FILE = path.join(basePath, 'data', 'appointments.json');
+const LOCAL_EMAIL_SETTINGS_FILE = path.join(basePath, 'data', 'emailSettings.json');
 const LOCAL_GALLERY_FILE = path.join(basePath, 'data', 'gallery.json');
 const LOCAL_SITE_DATA_FILE = path.join(basePath, 'data', 'siteData.json');
 
@@ -31,12 +33,22 @@ const BLOGS_FILE = isLocalWritable
   ? LOCAL_BLOGS_FILE 
   : path.join(os.tmpdir(), 'micro_blogs.json');
 
+const APPOINTMENTS_FILE = isLocalWritable
+  ? LOCAL_APPOINTMENTS_FILE
+  : path.join(os.tmpdir(), 'micro_appointments.json');
+
+const EMAIL_SETTINGS_FILE = isLocalWritable
+  ? LOCAL_EMAIL_SETTINGS_FILE
+  : path.join(os.tmpdir(), 'micro_email_settings.json');
+
 const GALLERY_FILE = LOCAL_GALLERY_FILE;
 const SITE_DATA_FILE = LOCAL_SITE_DATA_FILE;
 
 // Memory caches
 let productsCache = null;
 let blogsCache = null;
+let appointmentsCache = null;
+let emailSettingsCache = null;
 let siteDataCache = null;
 
 function readJsonFile(filePath, fallback = [], seedFile = null) {
@@ -304,10 +316,125 @@ const contentStore = {
     return false;
   },
 
+  // APPOINTMENTS
+  getAppointments() {
+    if (!appointmentsCache) {
+      appointmentsCache = readJsonFile(APPOINTMENTS_FILE, [], LOCAL_APPOINTMENTS_FILE);
+    }
+    return appointmentsCache;
+  },
+
+  getAppointmentById(id) {
+    const list = this.getAppointments();
+    return list.find(a => String(a.id) === String(id));
+  },
+
+  createAppointment(data) {
+    const list = this.getAppointments();
+    const nextId = list.reduce((max, a) => Math.max(max, Number(a.id) || 0), 0) + 1;
+
+    const branchKey = (data.branch || 'uttara').toLowerCase();
+    const branchName = branchKey === 'gazipur'
+      ? 'Gazipur Branch (Chandana Chowrasta)'
+      : 'Uttara Head Office (Sector-11)';
+
+    const now = new Date();
+    const createdAt = now.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+
+    const newAppointment = {
+      id: nextId,
+      name: (data.name || '').trim(),
+      phone: (data.phone || '').trim(),
+      branch: branchKey,
+      branchName,
+      preferredDate: (data.preferredDate || '').trim() || 'Anytime (10:00 AM - 10:00 PM)',
+      ageGroup: (data.ageGroup || '').trim() || 'Not specified',
+      message: (data.message || '').trim() || 'No additional notes',
+      status: data.status || 'Pending',
+      emailTo: data.emailTo || 'microhearingaidbd@gmail.com',
+      emailStatus: data.emailStatus || 'Sent',
+      createdAt,
+      timestamp: now.toISOString()
+    };
+
+    list.unshift(newAppointment);
+    writeJsonFile(APPOINTMENTS_FILE, list);
+    appointmentsCache = list;
+    return newAppointment;
+  },
+
+  updateAppointment(id, data) {
+    const list = this.getAppointments();
+    const index = list.findIndex(a => String(a.id) === String(id));
+    if (index === -1) return null;
+
+    const existing = list[index];
+    const updated = {
+      ...existing,
+      ...data,
+      id: existing.id
+    };
+
+    list[index] = updated;
+    writeJsonFile(APPOINTMENTS_FILE, list);
+    appointmentsCache = list;
+    return updated;
+  },
+
+  deleteAppointment(id) {
+    let list = this.getAppointments();
+    const initialLen = list.length;
+    list = list.filter(a => String(a.id) !== String(id));
+    if (list.length !== initialLen) {
+      writeJsonFile(APPOINTMENTS_FILE, list);
+      appointmentsCache = list;
+      return true;
+    }
+    return false;
+  },
+
+  // EMAIL NOTIFICATION SETTINGS
+  getEmailSettings() {
+    const defaults = {
+      recipientEmail: process.env.APPOINTMENT_EMAIL || 'microhearingaidbd@gmail.com',
+      smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
+      smtpPort: Number(process.env.SMTP_PORT) || 465,
+      smtpUser: process.env.SMTP_USER || 'microhearingaidbd@gmail.com',
+      smtpPass: process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || ''
+    };
+    if (!emailSettingsCache) {
+      const saved = readJsonFile(EMAIL_SETTINGS_FILE, null, LOCAL_EMAIL_SETTINGS_FILE);
+      emailSettingsCache = saved && typeof saved === 'object' ? { ...defaults, ...saved } : defaults;
+    }
+    return emailSettingsCache;
+  },
+
+  saveEmailSettings(newSettings) {
+    const current = this.getEmailSettings();
+    const updated = {
+      recipientEmail: (newSettings.recipientEmail || 'microhearingaidbd@gmail.com').trim(),
+      smtpHost: (newSettings.smtpHost || 'smtp.gmail.com').trim(),
+      smtpPort: Number(newSettings.smtpPort) || 465,
+      smtpUser: (newSettings.smtpUser || 'microhearingaidbd@gmail.com').trim(),
+      smtpPass: newSettings.smtpPass !== undefined ? newSettings.smtpPass.trim() : current.smtpPass
+    };
+    writeJsonFile(EMAIL_SETTINGS_FILE, updated);
+    emailSettingsCache = updated;
+    return updated;
+  },
+
   // STATS
   getStats() {
     const products = this.getProducts();
     const blogs = this.getBlogs();
+    const appointments = this.getAppointments();
     const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
     const types = [...new Set(products.map(p => p.type).filter(Boolean))];
     const categories = [...new Set(blogs.map(b => b.category).filter(Boolean))];
@@ -322,7 +449,11 @@ const contentStore = {
       typesList: types,
       totalBlogs: blogs.length,
       publishedBlogs: blogs.filter(b => b.published).length,
-      categoriesList: categories
+      categoriesList: categories,
+      totalAppointments: appointments.length,
+      pendingAppointments: appointments.filter(a => a.status === 'Pending').length,
+      confirmedAppointments: appointments.filter(a => a.status === 'Confirmed').length,
+      completedAppointments: appointments.filter(a => a.status === 'Completed').length
     };
   }
 };

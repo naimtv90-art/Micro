@@ -155,7 +155,7 @@ function initProductFilters() {
   });
 }
 
-// Interactive Booking Form Submission (AJAX)
+// Interactive Booking Form Submission (AJAX -> Dashboard + microhearingaidbd@gmail.com)
 function initBookingForms() {
   const forms = document.querySelectorAll('form[data-booking-form]');
 
@@ -182,12 +182,41 @@ function initBookingForms() {
         const result = await res.json();
 
         if (result.success) {
+          const targetEmail = result.recipientEmail || 'microhearingaidbd@gmail.com';
+          const branchLabel = data.branch === 'gazipur'
+            ? 'Gazipur Branch (Chandana Chowrasta)'
+            : 'Uttara Head Office (Sector-11)';
+
+          // If server did not use direct SMTP, also trigger browser-originated FormSubmit AJAX to guarantee email notification
+          if (result.emailMethod !== 'smtp') {
+            fetch(`https://formsubmit.co/ajax/${encodeURIComponent(targetEmail)}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                _subject: `New Appointment Request: ${data.name} (${data.phone}) - ${branchLabel}`,
+                _template: 'table',
+                _captcha: 'false',
+                'Patient Name': data.name,
+                'Phone Number': data.phone,
+                'Clinic Branch': branchLabel,
+                'Preferred Date / Time': data.preferredDate || 'Anytime (10:00 AM - 10:00 PM)',
+                'Age Group': data.ageGroup || 'Not specified',
+                'Notes / Requirements': data.message || 'No additional notes'
+              })
+            }).catch(() => {});
+          }
+
           form.innerHTML = `
             <div style="text-align: center; padding: 24px 10px;">
               <div style="width: 56px; height: 56px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 14px;">✓</div>
               <h3 style="color: #0f172a; margin-bottom: 8px;">Appointment Request Sent!</h3>
               <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 16px;">${result.message}</p>
-              <a href="https://wa.me/8801787519995?text=Hello%2C%20I%20just%20booked%20an%20appointment%20online" target="_blank" class="btn btn-whatsapp btn-sm">Message on WhatsApp</a>
+              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="https://wa.me/8801787519995?text=${encodeURIComponent(`Hello Micro Hearing Care Centre, I just booked an appointment.\nName: ${data.name}\nPhone: ${data.phone}\nBranch: ${branchLabel}`)}" target="_blank" class="btn btn-whatsapp btn-sm">💬 Confirm on WhatsApp</a>
+              </div>
             </div>
           `;
         } else {
@@ -272,7 +301,7 @@ function initHeroCarousel() {
   }
 
   if (next) {
-    next.addEventListener('click', (e) => {
+    prev.addEventListener('click', (e) => {
       e.preventDefault();
       go(1);
       start();
@@ -289,4 +318,3 @@ function initHeroCarousel() {
 
   start();
 }
-

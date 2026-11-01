@@ -1,0 +1,427 @@
+<%- include('layout-header', { pageTitle: 'Appointments Management – Micro Hearing CMS', activeNav: 'appointments' }) %>
+
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .page-title h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #06381d;
+    margin-bottom: 4px;
+  }
+  .page-title p {
+    color: #64748b;
+    font-size: 0.92rem;
+  }
+  .btn-settings {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    color: #06381d;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-settings:hover {
+    background: #f8fafc;
+    border-color: #006837;
+  }
+
+  /* Summary Mini Cards */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .summary-box {
+    background: #ffffff;
+    border: 1px solid var(--admin-card-border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+  .summary-box .label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .summary-box .val {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  /* Email Config Box */
+  .email-config-panel {
+    display: none;
+    background: #ffffff;
+    border: 2px solid #006837;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(0, 104, 55, 0.1);
+  }
+  .email-config-panel.open {
+    display: block;
+  }
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .form-field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+  }
+  .form-field input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+  }
+
+  /* Filter Bar */
+  .filter-bar {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    border: 1px solid var(--admin-card-border);
+    margin-bottom: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-input {
+    flex: 1;
+    min-width: 220px;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .filter-select {
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #ffffff;
+    min-width: 150px;
+  }
+  .btn-filter {
+    background: #006837;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .btn-reset {
+    background: #f1f5f9;
+    color: #475569;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* Table */
+  .table-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--admin-card-border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    overflow: hidden;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .admin-table th {
+    background: #f8fafc;
+    text-align: left;
+    padding: 14px 18px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--admin-card-border);
+  }
+  .admin-table td {
+    padding: 16px 18px;
+    font-size: 0.9rem;
+    color: #334155;
+    border-bottom: 1px solid var(--admin-card-border);
+    vertical-align: top;
+  }
+  .admin-table tr:hover td {
+    background: #fcfdfd;
+  }
+
+  .status-select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+  }
+  .status-Pending { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+  .status-Confirmed { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+  .status-Completed { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+  .status-Cancelled { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+
+  .contact-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 6px;
+    margin-right: 4px;
+  }
+  .chip-call {
+    background: #f1f5f9;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+  }
+  .chip-wa {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+  }
+  .btn-sm-act {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn-sm-act:hover {
+    background: #f1f5f9;
+  }
+  .btn-sm-del {
+    border-color: #fecaca;
+    color: #dc2626;
+    background: #fef2f2;
+  }
+  .btn-sm-del:hover {
+    background: #fee2e2;
+  }
+</style>
+
+<div class="page-header">
+  <div class="page-title">
+    <h1>📅 Appointments &amp; Consultation Requests</h1>
+    <p>All online bookings are saved here and forwarded to <strong><%= emailSettings.recipientEmail %></strong></p>
+  </div>
+  <div>
+    <button type="button" class="btn-settings" onclick="document.getElementById('emailSettingsPanel').classList.toggle('open')">
+      <span>📧</span> Email Settings (<%= emailSettings.recipientEmail %>)
+    </button>
+  </div>
+</div>
+
+<!-- Collapsible Email Notification Settings Panel -->
+<div id="emailSettingsPanel" class="email-config-panel">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div>
+      <h3 style="margin: 0 0 4px; color: #06381d; font-size: 1.15rem;">📧 Appointment Email Notification Settings</h3>
+      <p style="margin: 0; font-size: 0.86rem; color: #64748b;">
+        Every new appointment is sent to <strong><%= emailSettings.recipientEmail %></strong>. You can also add a Gmail App Password for direct SMTP delivery.
+      </p>
+    </div>
+    <button type="button" onclick="document.getElementById('emailSettingsPanel').classList.remove('open')" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #64748b;">&times;</button>
+  </div>
+
+  <form action="/admin/appointments/email-settings" method="POST">
+    <div class="config-grid">
+      <div class="form-field">
+        <label>Notification Recipient Email *</label>
+        <input type="email" name="recipientEmail" value="<%= emailSettings.recipientEmail %>" required placeholder="microhearingaidbd@gmail.com">
+      </div>
+      <div class="form-field">
+        <label>Sender Gmail / SMTP User</label>
+        <input type="email" name="smtpUser" value="<%= emailSettings.smtpUser %>" placeholder="microhearingaidbd@gmail.com">
+      </div>
+      <div class="form-field">
+        <label>Gmail App Password (Optional for Direct SMTP)</label>
+        <input type="password" name="smtpPass" value="<%= emailSettings.smtpPass %>" placeholder="16-digit Google App Password">
+      </div>
+      <div class="form-field">
+        <label>SMTP Host &amp; Port</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" name="smtpHost" value="<%= emailSettings.smtpHost %>" placeholder="smtp.gmail.com" style="flex: 2;">
+          <input type="number" name="smtpPort" value="<%= emailSettings.smtpPort %>" placeholder="465" style="flex: 1;">
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="submit" class="btn-filter">Save Email Settings</button>
+    </div>
+  </form>
+</div>
+
+<!-- Summary Metrics -->
+<div class="summary-row">
+  <div class="summary-box">
+    <div class="label">Total Requests</div>
+    <div class="val"><%= stats.totalAppointments || 0 %></div>
+  </div>
+  <div class="summary-box" style="border-left: 4px solid #f59e0b;">
+    <div class="label">Pending Confirmation</div>
+    <div class="val" style="color: #d97706;"><%= stats.pendingAppointments || 0 %></div>
+  </div>
+  <div class="summary-box" style="border-left: 4px solid #10b981;">
+    <div class="label">Confirmed</div>
+    <div class="val" style="color: #059669;"><%= stats.confirmedAppointments || 0 %></div>
+  </div>
+  <div class="summary-box" style="border-left: 4px solid #0284c7;">
+    <div class="label">Completed Visits</div>
+    <div class="val" style="color: #0284c7;"><%= stats.completedAppointments || 0 %></div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<form action="/admin/appointments" method="GET" class="filter-bar">
+  <input type="text" name="search" value="<%= searchQuery %>" class="filter-input" placeholder="Search by patient name, phone number, or notes...">
+  
+  <select name="branch" class="filter-select">
+    <option value="All" <%= selectedBranch === 'All' ? 'selected' : '' %>>All Clinic Branches</option>
+    <option value="uttara" <%= selectedBranch === 'uttara' ? 'selected' : '' %>>Uttara Head Office</option>
+    <option value="gazipur" <%= selectedBranch === 'gazipur' ? 'selected' : '' %>>Gazipur Branch</option>
+  </select>
+
+  <select name="status" class="filter-select">
+    <option value="All" <%= selectedStatus === 'All' ? 'selected' : '' %>>All Statuses</option>
+    <option value="Pending" <%= selectedStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+    <option value="Confirmed" <%= selectedStatus === 'Confirmed' ? 'selected' : '' %>>Confirmed</option>
+    <option value="Completed" <%= selectedStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
+    <option value="Cancelled" <%= selectedStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+  </select>
+
+  <button type="submit" class="btn-filter">Filter</button>
+  <% if (searchQuery || selectedBranch !== 'All' || selectedStatus !== 'All') { %>
+    <a href="/admin/appointments" class="btn-reset">Reset</a>
+  <% } %>
+</form>
+
+<!-- Appointments Table -->
+<div class="table-card">
+  <div style="overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID / Date</th>
+          <th>Patient Details</th>
+          <th>Clinic &amp; Preferred Time</th>
+          <th>Patient Notes / Requirements</th>
+          <th>Email Notification</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (appointments && appointments.length > 0) { %>
+          <% appointments.forEach(a => { %>
+            <tr>
+              <td style="white-space: nowrap;">
+                <strong style="color: #006837;">#<%= a.id %></strong>
+                <div style="font-size: 0.78rem; color: #64748b; margin-top: 3px;"><%= a.createdAt %></div>
+              </td>
+              <td>
+                <strong style="font-size: 0.96rem; color: #0f172a; display: block;"><%= a.name %></strong>
+                <span style="font-size: 0.78rem; color: #64748b;">Age Group: <strong><%= a.ageGroup || 'Adult' %></strong></span>
+                <div>
+                  <a href="tel:<%= a.phone %>" class="contact-chip chip-call">📞 <%= a.phone %></a>
+                  <a href="https://wa.me/88<%= a.phone.replace(/[^0-9]/g, '').replace(/^88/, '') %>?text=<%= encodeURIComponent(`Assalamu Alaikum ${a.name}, this is Micro Hearing Care Centre confirming your appointment at our ${a.branch === 'gazipur' ? 'Gazipur Branch' : 'Uttara Head Office'}.`) %>" target="_blank" class="contact-chip chip-wa">💬 WhatsApp</a>
+                </div>
+              </td>
+              <td>
+                <span style="display: inline-block; background: #eaf5ee; color: #006837; border: 1px solid #bbf7d0; padding: 3px 10px; border-radius: 9999px; font-size: 0.76rem; font-weight: 700; margin-bottom: 6px;">
+                  <%= a.branch === 'gazipur' ? '📍 Gazipur Branch' : '📍 Uttara Head Office' %>
+                </span>
+                <div style="font-size: 0.84rem; color: #334155; font-weight: 600;">
+                  ⏰ <%= a.preferredDate %>
+                </div>
+              </td>
+              <td style="max-width: 280px;">
+                <div style="font-size: 0.86rem; color: #334155; line-height: 1.45; white-space: pre-wrap;"><%= a.message %></div>
+              </td>
+              <td>
+                <div style="font-size: 0.78rem; color: #059669; font-weight: 700;">
+                  ✓ <%= a.emailTo || 'microhearingaidbd@gmail.com' %>
+                </div>
+                <div style="font-size: 0.73rem; color: #64748b; margin-top: 2px;">
+                  <%= a.emailStatus || 'Sent' %>
+                </div>
+              </td>
+              <td>
+                <form action="/admin/appointments/status/<%= a.id %>" method="POST">
+                  <select name="status" class="status-select status-<%= a.status || 'Pending' %>" onchange="this.form.submit()">
+                    <option value="Pending" <%= a.status === 'Pending' ? 'selected' : '' %>>⏳ Pending</option>
+                    <option value="Confirmed" <%= a.status === 'Confirmed' ? 'selected' : '' %>>✓ Confirmed</option>
+                    <option value="Completed" <%= a.status === 'Completed' ? 'selected' : '' %>>🏁 Completed</option>
+                    <option value="Cancelled" <%= a.status === 'Cancelled' ? 'selected' : '' %>>✕ Cancelled</option>
+                  </select>
+                </form>
+              </td>
+              <td style="text-align: right; white-space: nowrap;">
+                <div style="display: inline-flex; gap: 6px;">
+                  <form action="/admin/appointments/resend-email/<%= a.id %>" method="POST" style="display: inline;">
+                    <button type="submit" class="btn-sm-act" title="Resend Email to <%= emailSettings.recipientEmail %>">📧 Resend</button>
+                  </form>
+                  <form action="/admin/appointments/delete/<%= a.id %>" method="POST" style="display: inline;" onsubmit="return confirm('Delete this appointment request?');">
+                    <button type="submit" class="btn-sm-act btn-sm-del" title="Delete Appointment">🗑️</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 48px 20px; color: #64748b;">
+              <div style="font-size: 2.2rem; margin-bottom: 10px;">📅</div>
+              <strong style="font-size: 1.05rem; color: #0f172a; display: block; margin-bottom: 4px;">No appointment requests found</strong>
+              <span>When patients submit the booking form on your website, their requests will appear here and be sent to <strong><%= emailSettings.recipientEmail %></strong>.</span>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('layout-footer') %>

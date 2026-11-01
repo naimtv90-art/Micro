@@ -251,9 +251,12 @@
 <div class="dashboard-header">
   <div class="dashboard-title">
     <h1>Content Overview &amp; Control</h1>
-    <p>Live inventory from <code>data/products.json</code> and articles from <code>data/blogs.json</code></p>
+    <p>Live appointments (forwarded to <code><%= typeof emailSettings !== 'undefined' ? emailSettings.recipientEmail : 'microhearingaidbd@gmail.com' %></code>), products &amp; blog articles</p>
   </div>
   <div class="quick-actions">
+    <a href="/admin/appointments" class="btn-action-secondary" style="border-color: #006837; color: #006837;">
+      <span>📅</span> Appointments (<%= stats.pendingAppointments || 0 %> Pending)
+    </a>
     <a href="/admin/products/new" class="btn-action-primary">
       <span>➕</span> Add New Product
     </a>
@@ -265,6 +268,17 @@
 
 <!-- Metrics Cards -->
 <div class="metrics-grid">
+  <a href="/admin/appointments" class="metric-card accent-red" style="text-decoration: none; display: block;">
+    <div class="metric-head">
+      <span class="metric-label">Appointments</span>
+      <span class="metric-icon">📅</span>
+    </div>
+    <div class="metric-value"><%= stats.totalAppointments || 0 %></div>
+    <div class="metric-sub" style="color: #c9252c;">
+      <%= stats.pendingAppointments || 0 %> pending &bull; microhearingaidbd@gmail.com
+    </div>
+  </a>
+
   <div class="metric-card">
     <div class="metric-head">
       <span class="metric-label">Products in Catalog</span>
@@ -295,16 +309,91 @@
       <%= stats.publishedBlogs %> published live
     </div>
   </div>
+</div>
 
-  <div class="metric-card accent-red">
-    <div class="metric-head">
-      <span class="metric-label">Featured Showcase</span>
-      <span class="metric-icon">⭐</span>
+<!-- Recent Appointment Requests Panel -->
+<div class="admin-panel" style="margin-bottom: 28px;">
+  <div class="panel-header" style="background: #f0fdf4;">
+    <div>
+      <h2 class="panel-title">
+        <span>📅</span> Latest Appointment Requests
+      </h2>
+      <span style="font-size: 0.8rem; color: #166534; font-weight: 600;">
+        📧 Auto-forwarded to: <%= typeof emailSettings !== 'undefined' ? emailSettings.recipientEmail : 'microhearingaidbd@gmail.com' %>
+      </span>
     </div>
-    <div class="metric-value"><%= stats.featuredProducts %></div>
-    <div class="metric-sub" style="color: #c9252c;">
-      Featured on homepage
-    </div>
+    <a href="/admin/appointments" class="panel-link">Manage All Appointments (<%= stats.totalAppointments || 0 %>) &rarr;</a>
+  </div>
+  <div style="overflow-x: auto;">
+    <table class="panel-table">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Phone &amp; Contact</th>
+          <th>Branch &amp; Preferred Time</th>
+          <th>Notes</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (typeof recentAppointments !== 'undefined' && recentAppointments.length > 0) { %>
+          <% recentAppointments.forEach(a => { %>
+            <tr>
+              <td>
+                <strong style="color: #0f172a; display: block; font-size: 0.94rem;"><%= a.name %></strong>
+                <span style="font-size: 0.76rem; color: #64748b;">Age: <%= a.ageGroup || 'Adult' %> &bull; <%= a.createdAt %></span>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <a href="tel:<%= a.phone %>" style="font-weight: 700; color: #006837; text-decoration: none;"><%= a.phone %></a>
+                  <a href="https://wa.me/88<%= a.phone.replace(/[^0-9]/g, '').replace(/^88/, '') %>" target="_blank" class="action-btn" style="background: #dcfce7; color: #166534; border-color: #86efac; padding: 2px 8px; font-size: 0.74rem;">WhatsApp</a>
+                </div>
+              </td>
+              <td>
+                <span class="badge badge-brand" style="margin-bottom: 3px;"><%= a.branch === 'gazipur' ? 'Gazipur Branch' : 'Uttara Head Office' %></span>
+                <div style="font-size: 0.8rem; color: #475569;">⏰ <%= a.preferredDate %></div>
+              </td>
+              <td style="max-width: 240px;">
+                <div style="font-size: 0.84rem; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<%= a.message %>">
+                  <%= a.message %>
+                </div>
+              </td>
+              <td>
+                <% if (a.status === 'Confirmed') { %>
+                  <span class="badge badge-instock">Confirmed</span>
+                <% } else if (a.status === 'Completed') { %>
+                  <span class="badge" style="background: #e0f2fe; color: #0369a1;">Completed</span>
+                <% } else if (a.status === 'Cancelled') { %>
+                  <span class="badge badge-outofstock">Cancelled</span>
+                <% } else { %>
+                  <span class="badge" style="background: #fef3c7; color: #b45309;">Pending</span>
+                <% } %>
+              </td>
+              <td style="text-align: right; white-space: nowrap;">
+                <form action="/admin/appointments/status/<%= a.id %>" method="POST" style="display: inline;">
+                  <input type="hidden" name="redirectTo" value="/admin">
+                  <% if (a.status === 'Pending') { %>
+                    <input type="hidden" name="status" value="Confirmed">
+                    <button type="submit" class="action-btn" style="background: #006837; color: #fff; border-color: #006837; cursor: pointer;">✓ Confirm</button>
+                  <% } else if (a.status === 'Confirmed') { %>
+                    <input type="hidden" name="status" value="Completed">
+                    <button type="submit" class="action-btn" style="cursor: pointer;">✓ Complete</button>
+                  <% } %>
+                </form>
+                <a href="/admin/appointments" class="action-btn">Details</a>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 28px;">
+              No appointment requests yet. New bookings from the website will appear here and be emailed to <strong>microhearingaidbd@gmail.com</strong>.
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
   </div>
 </div>
 

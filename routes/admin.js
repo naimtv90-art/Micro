@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const { contentStore, slugify } = require('../data/contentStore');
+const { sendAppointmentEmail } = require('../data/emailService');
 
 const router = express.Router();
 
@@ -133,6 +134,7 @@ function requireAdmin(req, res, next) {
 // Global locals for admin layout
 router.use((req, res, next) => {
   res.locals.adminBaseUrl = '/admin';
+  res.locals.pendingAppointmentsCount = contentStore.getStats().pendingAppointments;
   res.locals.flash = {
     success: req.query.success || null,
     error: req.query.error || null
@@ -187,16 +189,113 @@ router.use(requireAdmin);
 // --- DASHBOARD ROUTE ---
 router.get(['/', '/dashboard'], (req, res) => {
   const stats = contentStore.getStats();
+  const recentAppointments = contentStore.getAppointments().slice(0, 6);
   const recentProducts = contentStore.getProducts().slice(0, 6);
   const recentBlogs = contentStore.getBlogs().slice(0, 5);
+  const emailSettings = contentStore.getEmailSettings();
 
   res.render('admin/dashboard', {
     pageTitle: 'Admin Dashboard – Micro Hearing CMS',
     activeNav: 'dashboard',
     stats,
+    recentAppointments,
     recentProducts,
-    recentBlogs
+    recentBlogs,
+    emailSettings
   });
+});
+
+// --- APPOINTMENTS ROUTES ---
+
+// List Appointments
+router.get('/appointments', (req, res) => {
+  const { search, branch, status } = req.query;
+  let appointments = [...contentStore.getAppointments()];
+
+  if (search) {
+    const q = search.toLowerCase();
+    appointments = appointments.filter(a =>
+      (a.name && a.name.toLowerCase().includes(q)) ||
+      (a.phone && a.phone.toLowerCase().includes(q)) ||
+      (a.message && a.message.toLowerCase().includes(q)) ||
+      (a.preferredDate && a.preferredDate.toLowerCase().includes(q))
+    );
+  }
+
+  if (branch && branch !== 'All') {
+    appointments = appointments.filter(a => a.branch && a.branch.toLowerCase() === branch.toLowerCase());
+  }
+
+  if (status && status !== 'All') {
+    appointments = appointments.filter(a => a.status && a.status.toLowerCase() === status.toLowerCase());
+  }
+
+  const stats = contentStore.getStats();
+  const emailSettings = contentStore.getEmailSettings();
+
+  res.render('admin/appointments', {
+    pageTitle: 'Appointments Management – Micro Hearing CMS',
+    activeNav: 'appointments',
+    appointments,
+    stats,
+    emailSettings,
+    selectedBranch: branch || 'All',
+    selectedStatus: status || 'All',
+    searchQuery: search || ''
+  });
+});
+
+// Update Appointment Status
+router.post('/appointments/status/:id', (req, res) => {
+  const { status, redirectTo } = req.body;
+  const updated = contentStore.updateAppointment(req.params.id, { status: status || 'Pending' });
+  const targetUrl = redirectTo || '/admin/appointments';
+
+  if (updated) {
+    res.redirect(`${targetUrl}?success=${encodeURIComponent(`Appointment for "${updated.name}" marked as ${updated.status}.`)}`);
+  } else {
+    res.redirect(`${targetUrl}?error=${encodeURIComponent('Appointment not found.')}`);
+  }
+});
+
+// Resend Appointment Email to microhearingaidbd@gmail.com
+router.post('/appointments/resend-email/:id', async (req, res) => {
+  const appointment = contentStore.getAppointmentById(req.params.id);
+  if (!appointment) {
+    return res.redirect(`/admin/appointments?error=${encodeURIComponent('Appointment not found.')}`);
+  }
+  const result = await sendAppointmentEmail(appointment);
+  if (result.sent) {
+    return res.redirect(`/admin/appointments?success=${encodeURIComponent(`Appointment details sent to ${result.recipient}!`)}`);
+  }
+  return res.redirect(`/admin/appointments?error=${encodeURIComponent('Could not send email automatically. Please check Email Settings.')}`);
+});
+
+// Delete Appointment
+router.post('/appointments/delete/:id', (req, res) => {
+  const appointment = contentStore.getAppointmentById(req.params.id);
+  const name = appointment ? appointment.name : 'Appointment';
+  const deleted = contentStore.deleteAppointment(req.params.id);
+  const targetUrl = req.body.redirectTo || '/admin/appointments';
+
+  if (deleted) {
+    res.redirect(`${targetUrl}?success=${encodeURIComponent(`Appointment request from "${name}" was removed.`)}`);
+  } else {
+    res.redirect(`${targetUrl}?error=${encodeURIComponent('Could not delete appointment.')}`);
+  }
+});
+
+// Update Email Notification Settings
+router.post('/appointments/email-settings', (req, res) => {
+  const { recipientEmail, smtpUser, smtpPass, smtpHost, smtpPort } = req.body;
+  const saved = contentStore.saveEmailSettings({
+    recipientEmail: recipientEmail || 'microhearingaidbd@gmail.com',
+    smtpUser: smtpUser || 'microhearingaidbd@gmail.com',
+    smtpPass,
+    smtpHost: smtpHost || 'smtp.gmail.com',
+    smtpPort: smtpPort || 465
+  });
+  res.redirect(`/admin/appointments?success=${encodeURIComponent(`Notification email settings updated (${saved.recipientEmail}).`)}`);
 });
 
 // --- PRODUCT ROUTES ---

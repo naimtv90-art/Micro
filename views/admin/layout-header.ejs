@@ -295,6 +295,15 @@
         <span class="icon">📊</span>
         <span>Dashboard</span>
       </a>
+      <a href="/admin/appointments" class="nav-item <%= typeof activeNav !== 'undefined' && activeNav === 'appointments' ? 'active' : '' %>" style="justify-content: space-between;">
+        <span style="display: flex; align-items: center; gap: 12px;">
+          <span class="icon">📅</span>
+          <span>Appointments</span>
+        </span>
+        <% if (typeof pendingAppointmentsCount !== 'undefined' && pendingAppointmentsCount > 0) { %>
+          <span style="background: #ef4444; color: #ffffff; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 9999px;"><%= pendingAppointmentsCount %></span>
+        <% } %>
+      </a>
 
       <div class="nav-section-title">Catalog &amp; Inventory</div>
       <a href="/admin/products" class="nav-item <%= typeof activeNav !== 'undefined' && activeNav === 'products' ? 'active' : '' %>">

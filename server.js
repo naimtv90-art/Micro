@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const fs = require('fs');
 const { contentStore } = require('./data/contentStore');
+const { sendAppointmentEmail } = require('./data/emailService');
 const adminRouter = require('./routes/admin');
 
 const app = express();
@@ -305,20 +306,54 @@ app.get('/api/gallery', (req, res) => {
   res.json(galleryData);
 });
 
-// Interactive appointment booking endpoint
-app.post('/api/appointment', (req, res) => {
-  const { name, phone, branch, preferredDate, message } = req.body;
+// Interactive appointment booking endpoint -> Saves to Dashboard + Sends Email to microhearingaidbd@gmail.com
+app.post('/api/appointment', async (req, res) => {
+  const { name, phone, branch, preferredDate, ageGroup, message } = req.body;
   if (!name || !phone) {
     return res.status(400).json({ success: false, error: 'Name and phone number are required.' });
   }
 
-  // In production, send SMS / Email notification or save to database
-  console.log('New Appointment Request Received:', { name, phone, branch, preferredDate, message, timestamp: new Date() });
+  try {
+    const emailSettings = contentStore.getEmailSettings();
+    const recipientEmail = emailSettings.recipientEmail || 'microhearingaidbd@gmail.com';
 
-  return res.json({
-    success: true,
-    message: 'Thank you! Your appointment request has been received. Our audiology team will contact you shortly to confirm.'
-  });
+    // 1. Save to Dashboard / ContentStore
+    const appointment = contentStore.createAppointment({
+      name,
+      phone,
+      branch,
+      preferredDate,
+      ageGroup,
+      message,
+      emailTo: recipientEmail
+    });
+
+    // 2. Send Email Notification to microhearingaidbd@gmail.com
+    const emailResult = await sendAppointmentEmail(appointment);
+
+    console.log('New Appointment Saved & Emailed:', {
+      id: appointment.id,
+      name: appointment.name,
+      phone: appointment.phone,
+      branch: appointment.branchName,
+      emailTo: recipientEmail,
+      emailMethod: emailResult.method
+    });
+
+    return res.json({
+      success: true,
+      appointment,
+      recipientEmail,
+      emailMethod: emailResult.method,
+      message: 'Thank you! Your appointment request has been saved to our dashboard and sent to microhearingaidbd@gmail.com. Our audiology team will contact you shortly to confirm.'
+    });
+  } catch (err) {
+    console.error('Error processing appointment:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'Could not save appointment. Please call our helpline 01787 51 999 5.'
+    });
+  }
 });
 
 // SEO Sitemap
@@ -391,4 +426,3 @@ if (require.main === module) {
 
 // Export for Vercel Serverless Function
 module.exports = app;
-
